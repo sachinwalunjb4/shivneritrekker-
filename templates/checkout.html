@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Book {{ trek.name }} – {{ site.name }}{% endblock %}
+{% block meta_description %}Book {{ trek.name }} online with secure payment.{% endblock %}
+
+{% block content %}
+<section class="section checkout-page">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('tours') }}">Treks</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('trek_detail', slug=trek.slug) }}">{{ trek.name }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+      </ol>
+    </nav>
+
+    {% if not payments_live %}
+    <div class="alert alert-warning small"><i class="fa-solid fa-flask me-1"></i>
+      <strong>Demo mode:</strong> no real payment is taken. Add <code>RAZORPAY_KEY_ID</code> and <code>RAZORPAY_KEY_SECRET</code> to <code>.env</code> to enable live payments.</div>
+    {% endif %}
+
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="form-card" id="checkoutCard">
+          <h1 class="h3 mb-4">Booking details</h1>
+          <div id="checkoutAlert" class="alert alert-danger d-none" role="alert"></div>
+          <form id="checkoutForm" novalidate
+                data-slug="{{ trek.slug }}" data-price="{{ trek.price }}"
+                data-trek="{{ trek.name }}" data-site="{{ site.name }}"
+                data-live="{{ 'true' if payments_live else 'false' }}" data-key="{{ razorpay_key }}">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="cDate">Departure date *</label>
+                <select class="form-select" id="cDate" name="date" required>
+                  {% for d in dates %}
+                  <option value="{{ d.isoformat() }}" {% if selected_date == d.isoformat() %}selected{% endif %}>{{ d.strftime('%a, %d %b %Y') }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="cPax">Participants *</label>
+                <div class="input-group qty">
+                  <button class="btn btn-outline-secondary" type="button" data-step="-1" aria-label="Fewer participants">−</button>
+                  <input class="form-control text-center" id="cPax" name="participants" type="number" min="1" max="{{ max_participants }}" value="1" required>
+                  <button class="btn btn-outline-secondary" type="button" data-step="1" aria-label="More participants">+</button>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="cName">Full name *</label>
+                <input class="form-control" id="cName" name="name" required minlength="2" autocomplete="name">
+                <div class="invalid-feedback">Please enter your name.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="cPhone">Phone *</label>
+                <input class="form-control" id="cPhone" name="phone" type="tel" required pattern="\+?[\d\s\-\(\)]{7,20}" autocomplete="tel">
+                <div class="invalid-feedback">Please enter a valid phone number.</div>
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="cEmail">Email *</label>
+                <input class="form-control" id="cEmail" name="email" type="email" required autocomplete="email">
+                <div class="invalid-feedback">Please enter a valid email address.</div>
+              </div>
+              <div class="col-12">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="cTerms" required>
+                  <label class="form-check-label small" for="cTerms">I accept the cancellation policy and confirm all participants are fit for this trek.</label>
+                  <div class="invalid-feedback">Please accept to continue.</div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="form-card text-center d-none" id="successCard">
+          <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+          <h2 class="h3">Booking confirmed!</h2>
+          <p class="text-muted">Payment ID: <code id="paymentId"></code><br>We've sent your details to our team, and a trek coordinator will contact you on WhatsApp within 24 hours.</p>
+          <a href="{{ url_for('tours') }}" class="btn btn-dark">Explore more treks</a>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="booking-card">
+          <div class="d-flex gap-3 align-items-center mb-3">
+            <img src="{{ img(trek.images[0], 300) }}" alt="" width="96" height="72" class="rounded object-fit-cover">
+            <div>
+              <h2 class="h6 mb-1">{{ trek.name }}</h2>
+              <small class="text-muted"><i class="fa-regular fa-calendar"></i> {{ trek.duration }} · {{ trek.difficulty }}</small>
+            </div>
+          </div>
+          <dl class="summary-list">
+            <div><dt>Price per person</dt><dd>{{ trek.price|inr }}</dd></div>
+            <div><dt>Participants</dt><dd id="sumPax">1</dd></div>
+            <div class="total"><dt>Total payable</dt><dd id="sumTotal">{{ trek.price|inr }}</dd></div>
+          </dl>
+          <button type="submit" form="checkoutForm" class="btn btn-accent btn-lg w-100" id="payBtn">
+            <span class="btn-label"><i class="fa-solid fa-lock me-1"></i> Pay Securely</span>
+            <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+          </button>
+          <p class="small text-muted text-center mt-2 mb-0"><i class="fa-solid fa-shield-halved"></i> UPI, cards, net banking and wallets via Razorpay</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+{% if payments_live %}<script src="https://checkout.razorpay.com/v1/checkout.js"></script>{% endif %}
+<script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
+{% endblock %}

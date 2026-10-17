@@ -1,0 +1,60 @@
+{% macro difficulty_meter(level_name, levels) -%}
+  {%- set level = levels.get(level_name, 1) -%}
+  <span class="difficulty d-{{ level }}" title="Difficulty: {{ level_name }}">
+    <span class="bars" aria-hidden="true">{% for i in range(4) %}<i class="{% if i < level %}on{% endif %}"></i>{% endfor %}</span>
+    {{ level_name }}
+  </span>
+{%- endmacro %}
+
+
+{% macro trek_card(trek, levels, category_map) -%}
+<article class="trek-card h-100"
+         data-name="{{ trek.name|lower }} {{ trek.region|lower }}"
+         data-category="{{ trek.category }}"
+         data-tags="{{ trek.tags|join(' ') }}"
+         data-difficulty="{{ levels.get(trek.difficulty, 1) }}"
+         data-days="{{ trek.duration_days }}"
+         data-price="{{ trek.price }}"
+         data-rating="{{ trek.rating }}">
+  <a class="trek-card__media" href="{{ url_for('trek_detail', slug=trek.slug) }}" tabindex="-1" aria-hidden="true">
+    <img src="{{ img(trek.images[0], 700) }}" alt="" loading="lazy" width="700" height="467">
+    <span class="badge-cat">{{ category_map[trek.category].name }}</span>
+    {% if 'monsoon' in trek.tags %}<span class="badge-season"><i class="fa-solid fa-cloud-rain"></i> Monsoon</span>{% endif %}
+  </a>
+  <div class="trek-card__body">
+    <div class="d-flex justify-content-between align-items-center small text-muted mb-1">
+      <span><i class="fa-solid fa-location-dot text-accent"></i> {{ trek.region }}</span>
+      <span class="rating"><i class="fa-solid fa-star"></i> {{ trek.rating }}</span>
+    </div>
+    <h3 class="h5 trek-card__title">
+      <a href="{{ url_for('trek_detail', slug=trek.slug) }}" class="stretched-link-sm">{{ trek.name }}</a>
+    </h3>
+    <p class="trek-card__summary">{{ trek.summary }}</p>
+    <ul class="trek-meta">
+      <li><i class="fa-regular fa-calendar"></i> {{ trek.duration }}</li>
+      <li>{{ difficulty_meter(trek.difficulty, levels) }}</li>
+    </ul>
+    <div class="trek-card__footer">
+      <div>
+        <small class="text-muted d-block lh-1">From</small>
+        <span class="price">{{ trek.price|inr }}</span>
+      </div>
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-dark btn-sm" href="{{ url_for('trek_detail', slug=trek.slug) }}">Details</a>
+        <a class="btn btn-accent btn-sm" href="{{ url_for('checkout', slug=trek.slug) }}">Book Now</a>
+      </div>
+    </div>
+  </div>
+</article>
+{%- endmacro %}
+
+
+{% macro page_header(title, subtitle, image) -%}
+<header class="page-header parallax" data-parallax-speed="0.35">
+  <div class="parallax-bg" style="background-image:url('{{ img(image, 1920) }}')"></div>
+  <div class="container position-relative">
+    <h1 class="display-5 fw-bold">{{ title }}</h1>
+    {% if subtitle %}<p class="lead mb-0">{{ subtitle }}</p>{% endif %}
+  </div>
+</header>
+{%- endmacro %}

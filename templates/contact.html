@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% from "partials/_macros.html" import page_header with context %}
+{% block title %}Contact Us – {{ site.name }}{% endblock %}
+{% block meta_description %}Contact {{ site.name }} for trek bookings, group trips, school camps and corporate programs.{% endblock %}
+{% block nav_class %}nav-transparent{% endblock %}
+
+{% block content %}
+{{ page_header('Contact Us', 'Questions about a trek, group booking or custom trip? We usually reply within a few hours.', 'header_contact') }}
+
+<section class="section pt-5">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-7">
+        <div class="form-card">
+          <h2 class="h4 mb-1">Send us a message</h2>
+          <p class="text-muted small mb-4">Fields marked * are required.</p>
+
+          <div id="formAlert" class="alert d-none" role="alert" aria-live="polite"></div>
+
+          <form id="contactForm" method="post" action="{{ url_for('contact') }}" novalidate>
+            {# Honeypot field to catch bots – hidden from people and screen readers. #}
+            <div class="hp-field" aria-hidden="true">
+              <label for="website">Website</label>
+              <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="name">Full name *</label>
+                <input class="form-control" id="name" name="name" required minlength="2" maxlength="100" autocomplete="name">
+                <div class="invalid-feedback">Please enter your name.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="email">Email *</label>
+                <input class="form-control" id="email" name="email" type="email" required maxlength="150" autocomplete="email">
+                <div class="invalid-feedback">Please enter a valid email address.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="phone">Phone number *</label>
+                <input class="form-control" id="phone" name="phone" type="tel" required pattern="\+?[\d\s\-\(\)]{7,20}" maxlength="20" autocomplete="tel" placeholder="Your mobile number">
+                <div class="invalid-feedback">Please enter a valid phone number.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="trek">Trek of interest</label>
+                <select class="form-select" id="trek" name="trek">
+                  <option value="">Not sure yet</option>
+                  {% for c in categories %}
+                  <optgroup label="{{ c.name }}">
+                    {% for t in treks if t.category == c.slug %}
+                    <option {% if preselect == t.name %}selected{% endif %}>{{ t.name }}</option>
+                    {% endfor %}
+                  </optgroup>
+                  {% endfor %}
+                  <option {% if preselect == 'Custom / private trip' %}selected{% endif %}>Custom / private trip</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="message">Message *</label>
+                <textarea class="form-control" id="message" name="message" rows="5" required minlength="10" maxlength="3000"
+                          placeholder="Tell us your preferred dates, group size and any questions."></textarea>
+                <div class="invalid-feedback">Please write at least 10 characters.</div>
+              </div>
+              <div class="col-12 d-grid d-sm-flex">
+                <button class="btn btn-accent btn-lg px-5" type="submit" id="contactSubmit">
+                  <span class="btn-label"><i class="fa-solid fa-paper-plane me-1"></i> Send Message</span>
+                  <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="contact-info">
+          <h2 class="h4 mb-4">Business details</h2>
+          <div class="info-row"><i class="fa-solid fa-user"></i><div><strong>Contact person</strong><p>{{ site.contact_person }}</p></div></div>
+          <div class="info-row"><i class="fa-solid fa-location-dot"></i><div><strong>Office</strong><p>{{ site.address }}<br>
+            <a href="{{ site.map_link }}" target="_blank" rel="noopener"><i class="fa-solid fa-diamond-turn-right"></i> Get directions</a></p></div></div>
+          <div class="info-row"><i class="fa-solid fa-phone"></i><div><strong>Phone</strong><p><a href="tel:{{ site.phone|replace(' ', '') }}">{{ site.phone }}</a></p></div></div>
+          <div class="info-row"><i class="fa-solid fa-envelope"></i><div><strong>Email</strong><p><a href="mailto:{{ site.email }}">{{ site.email }}</a></p></div></div>
+          <div class="info-row"><i class="fa-regular fa-clock"></i><div><strong>Hours</strong><p>{{ site.hours }}</p></div></div>
+          <a class="btn btn-whatsapp w-100 mt-2" href="{{ whatsapp_link('Hi! I have a question about a trek.') }}" target="_blank" rel="noopener">
+            <i class="fa-brands fa-whatsapp me-1"></i> Chat on WhatsApp
+          </a>
+          <div class="ratio ratio-4x3 map-embed mt-4">
+            <iframe src="{{ site.map_embed }}" title="Map: {{ site.name }} office, Narayangaon" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

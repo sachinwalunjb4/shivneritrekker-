@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% from "partials/_macros.html" import trek_card with context %}
+{% block nav_class %}nav-transparent{% endblock %}
+
+{% block content %}
+{# ------------------------------------------------------------------ Hero slider #}
+<section class="hero">
+  <div id="heroCarousel" class="carousel slide carousel-fade h-100" data-bs-ride="carousel" data-bs-interval="6000" data-bs-pause="hover">
+    <div class="carousel-indicators">
+      {% for s in slides %}
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ loop.index0 }}"
+              {% if loop.first %}class="active" aria-current="true"{% endif %} aria-label="Slide {{ loop.index }}"></button>
+      {% endfor %}
+    </div>
+    <div class="carousel-inner h-100">
+      {% for s in slides %}
+      <div class="carousel-item h-100 {% if loop.first %}active{% endif %}">
+        <div class="hero-bg parallax-hero" style="background-image:url('{{ img(s.image, 1920) }}')"></div>
+        <div class="hero-overlay"></div>
+        <div class="container h-100 d-flex align-items-center">
+          <div class="hero-content">
+            <span class="eyebrow">{{ s.eyebrow }}</span>
+            {% if loop.first %}<h1 class="hero-title">{{ s.title }}</h1>{% else %}<h2 class="hero-title">{{ s.title }}</h2>{% endif %}
+            <p class="hero-text">{{ s.text }}</p>
+            <div class="d-flex flex-wrap gap-2">
+              <a href="{{ s.href }}" class="btn btn-accent btn-lg">{{ s.cta }} <i class="fa-solid fa-arrow-right ms-1"></i></a>
+              <a href="{{ whatsapp_link('Hi! Please help me pick a trek.') }}" target="_blank" rel="noopener" class="btn btn-outline-light btn-lg">
+                <i class="fa-brands fa-whatsapp me-1"></i> Ask an Expert
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span>
+    </button>
+  </div>
+
+  <div class="hero-search container">
+    <form action="{{ url_for('tours') }}" method="get" class="search-card" role="search">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-5">
+          <label for="heroQ" class="form-label small fw-semibold"><i class="fa-solid fa-magnifying-glass text-accent"></i> Search</label>
+          <input id="heroQ" type="search" name="q" class="form-control" placeholder="Trek name or region, e.g. Rajmachi">
+        </div>
+        <div class="col-md-4">
+          <label for="heroCat" class="form-label small fw-semibold"><i class="fa-solid fa-layer-group text-accent"></i> Category</label>
+          <select id="heroCat" name="category" class="form-select">
+            <option value="">All categories</option>
+            {% for c in categories %}<option value="{{ c.slug }}">{{ c.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3 d-grid">
+          <button class="btn btn-accent" type="submit">Find Treks</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+{# ------------------------------------------------------------------ Stats #}
+<section class="stats-strip">
+  <div class="container">
+    <div class="row text-center g-3">
+      {% for value, label in [('12,000+', 'Happy trekkers'), ('10+', 'Years of experience'), (trek_count ~ '+', 'Curated treks'), ('4.8/5', 'Average rating')] %}
+      <div class="col-6 col-md-3"><div class="stat"><strong>{{ value }}</strong><span>{{ label }}</span></div></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------------------------ Trending #}
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow-dark">Trending this season</span>
+        <h2 class="section-title">Popular Treks</h2>
+      </div>
+      <a href="{{ url_for('tours') }}" class="link-arrow">See all treks <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="row g-4">
+      {% for t in trending %}
+      <div class="col-sm-6 col-lg-3 reveal">{{ trek_card(t, levels, category_map) }}</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------------------------ Treks by location #}
+<section class="section bg-soft">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow-dark">Weekend getaways</span>
+        <h2 class="section-title">Treks by Location</h2>
+      </div>
+    </div>
+    <ul class="nav nav-pills pill-tabs mb-4" role="tablist">
+      {% for g in location_groups %}
+      <li class="nav-item" role="presentation">
+        <button class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ g.slug }}" data-bs-toggle="pill"
+                data-bs-target="#pane-{{ g.slug }}" type="button" role="tab"
+                aria-controls="pane-{{ g.slug }}" aria-selected="{{ 'true' if loop.first else 'false' }}">
+          <i class="fa-solid {{ g.icon }} me-1"></i> {{ g.name }}
+        </button>
+      </li>
+      {% endfor %}
+    </ul>
+    <div class="tab-content">
+      {% for g in location_groups %}
+      <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="pane-{{ g.slug }}" role="tabpanel" aria-labelledby="tab-{{ g.slug }}" tabindex="0">
+        <div class="scroll-row">
+          {% for t in g.treks %}
+          <div class="scroll-item">{{ trek_card(t, levels, category_map) }}</div>
+          {% endfor %}
+        </div>
+        <div class="text-center mt-3">
+          <a href="{{ url_for('tours', tag=g.slug) }}" class="link-arrow">View all {{ g.name|lower }} <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------------------------ Monsoon specials (parallax) #}
+<section class="monsoon parallax" data-parallax-speed="0.3">
+  <div class="parallax-bg" style="background-image:url('{{ img('monsoon_banner', 1920) }}')"></div>
+  <div class="container position-relative">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-4 text-white reveal">
+        <span class="eyebrow"><i class="fa-solid fa-cloud-showers-heavy"></i> June – September</span>
+        <h2 class="section-title text-white">Monsoon Specials</h2>
+        <p class="opacity-75">One-day treks to waterfalls, misty forts and green valleys within a few hours of Mumbai and Pune. Weekend batches fill fast.</p>
+        <a href="{{ url_for('tours', tag='monsoon') }}" class="btn btn-light">All monsoon treks</a>
+      </div>
+      <div class="col-lg-8">
+        <div class="row g-3">
+          {% for t in monsoon %}
+          <div class="col-md-4 reveal">
+            <a class="mini-card" href="{{ url_for('trek_detail', slug=t.slug) }}">
+              <img src="{{ img(t.images[0], 500) }}" alt="{{ t.name }}" loading="lazy" width="500" height="333">
+              <div class="mini-card__body">
+                <h3 class="h6 mb-1">{{ t.name }}</h3>
+                <small><i class="fa-regular fa-clock"></i> {{ t.duration }} · {{ t.price|inr }}</small>
+              </div>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------------------------ Categories #}
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow-dark">Choose your adventure</span>
+        <h2 class="section-title">Trek Categories</h2>
+      </div>
+    </div>
+    <div class="row g-4">
+      {% for c in categories %}
+      <div class="col-sm-6 col-lg-3 reveal">
+        <a class="category-card" href="{{ url_for('tours', category=c.slug) }}">
+          <img src="{{ img(c.image, 900) }}" alt="" loading="lazy" width="900" height="1200">
+          <div class="category-card__body">
+            <span class="icon"><i class="fa-solid {{ c.icon }}"></i></span>
+            <h3 class="h5">{{ c.name }}</h3>
+            <p>{{ c.blurb }}</p>
+            <span class="count">{{ category_counts[c.slug] }} trips <i class="fa-solid fa-arrow-right"></i></span>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-5">
+      <a href="{{ url_for('tours') }}" class="btn btn-dark btn-lg px-5">View All Treks <i class="fa-solid fa-arrow-right ms-1"></i></a>
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------------------------ Why us + testimonials #}
+<section class="section bg-soft">
+  <div class="container">
+    <div class="row g-4 mb-5">
+      {% for icon, title, text in [
+        ('fa-shield-halved', 'Safety first', 'Certified leaders, first-aid kits and a strict trek-leader-to-trekker ratio.'),
+        ('fa-users', 'Small groups', 'Batches capped so every trekker gets attention on the trail.'),
+        ('fa-leaf', 'Leave no trace', 'We carry back all waste and work with local village communities.'),
+        ('fa-headset', 'Real support', 'Talk to a real person on call or WhatsApp before and during your trek.')] %}
+      <div class="col-sm-6 col-lg-3 reveal">
+        <div class="feature">
+          <span class="feature__icon"><i class="fa-solid {{ icon }}"></i></span>
+          <h3 class="h6">{{ title }}</h3>
+          <p class="small text-muted mb-0">{{ text }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <h2 class="section-title text-center mb-4 reveal">What trekkers say</h2>
+    <div class="row g-4">
+      {% for r in testimonials %}
+      <div class="col-md-4 reveal">
+        <figure class="testimonial">
+          <div class="stars" aria-label="5 out of 5 stars">{% for _ in range(5) %}<i class="fa-solid fa-star"></i>{% endfor %}</div>
+          <blockquote>“{{ r.text }}”</blockquote>
+          <figcaption><strong>{{ r.name }}</strong> · {{ r.trek }}</figcaption>
+        </figure>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

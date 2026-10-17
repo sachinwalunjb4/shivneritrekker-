@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% from "partials/_macros.html" import trek_card, difficulty_meter with context %}
+{% block title %}{{ trek.name }} – {{ trek.duration }} | {{ site.name }}{% endblock %}
+{% block meta_description %}{{ trek.summary }} {{ trek.duration }}, {{ trek.difficulty }} trek from {{ trek.start_point }}. Book online from {{ trek.price|inr }}.{% endblock %}
+{% block nav_class %}nav-transparent{% endblock %}
+{% block body_class %}has-mobile-bar{% endblock %}
+
+{% block content %}
+{# ------------------------------------------------------------------ Trek hero slider #}
+<section class="trek-hero">
+  <div id="trekCarousel" class="carousel slide carousel-fade h-100" data-bs-ride="carousel" data-bs-interval="5000">
+    <div class="carousel-inner h-100">
+      {% for src in trek.images %}
+      <div class="carousel-item h-100 {% if loop.first %}active{% endif %}">
+        <div class="hero-bg parallax-hero" style="background-image:url('{{ img(src, 1920) }}')"></div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="hero-overlay"></div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#trekCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous photo</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#trekCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next photo</span>
+    </button>
+  </div>
+  <div class="trek-hero__content">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ url_for('tours', category=trek.category) }}">{{ category_map[trek.category].name }}</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{ trek.name }}</li>
+        </ol>
+      </nav>
+      <h1 class="display-5 fw-bold text-white mb-3">{{ trek.name }}</h1>
+      <ul class="hero-chips">
+        <li><i class="fa-solid fa-location-dot"></i> {{ trek.region }}</li>
+        <li><i class="fa-regular fa-calendar"></i> {{ trek.duration }}</li>
+        <li><i class="fa-solid fa-signal"></i> {{ trek.difficulty }}</li>
+        <li><i class="fa-solid fa-star"></i> {{ trek.rating }} rating</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section pt-5">
+  <div class="container">
+    <div class="row g-5">
+      {# -------------------------------------------------------------- Main column #}
+      <div class="col-lg-8">
+        <div class="facts-grid mb-5">
+          <div class="fact"><i class="fa-regular fa-clock"></i><span>Duration</span><strong>{{ trek.duration }}</strong></div>
+          <div class="fact"><i class="fa-solid fa-signal"></i><span>Difficulty</span><strong>{{ difficulty_meter(trek.difficulty, levels) }}</strong></div>
+          <div class="fact"><i class="fa-solid fa-mountain"></i><span>Max altitude</span><strong>{{ trek.altitude }}</strong></div>
+          <div class="fact"><i class="fa-solid fa-location-crosshairs"></i><span>Starting point</span><strong>{{ trek.start_point }}</strong></div>
+          <div class="fact"><i class="fa-solid fa-sun"></i><span>Best season</span><strong>{{ trek.season_months|months }}</strong></div>
+          <div class="fact"><i class="fa-solid fa-indian-rupee-sign"></i><span>Price</span><strong>{{ trek.price|inr }} <small class="text-muted fw-normal">/ person</small></strong></div>
+        </div>
+
+        <h2 class="h3 mb-3">Overview</h2>
+        <p class="lead-sm">{{ trek.overview }}</p>
+        <ul class="highlights">
+          {% for h in trek.highlights %}<li><i class="fa-solid fa-circle-check"></i> {{ h }}</li>{% endfor %}
+        </ul>
+
+        <h2 class="h3 mt-5 mb-3" id="itinerary">Day-by-day itinerary</h2>
+        <div class="accordion itinerary" id="itineraryAcc">
+          {% for step in trek.itinerary %}
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#step{{ loop.index }}" aria-expanded="{{ 'true' if loop.first else 'false' }}" aria-controls="step{{ loop.index }}">
+                <span class="step-no">{{ '%02d'|format(loop.index) }}</span> {{ step.title }}
+              </button>
+            </h3>
+            <div id="step{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" data-bs-parent="#itineraryAcc">
+              <div class="accordion-body">{{ step.desc }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="row g-4 mt-4">
+          <div class="col-md-6">
+            <div class="incl-box incl">
+              <h2 class="h5"><i class="fa-solid fa-circle-check"></i> Inclusions</h2>
+              <ul>{% for i in trek.inclusions %}<li>{{ i }}</li>{% endfor %}</ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="incl-box excl">
+              <h2 class="h5"><i class="fa-solid fa-circle-xmark"></i> Exclusions</h2>
+              <ul>{% for i in trek.exclusions %}<li>{{ i }}</li>{% endfor %}</ul>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="h3 mt-5 mb-3">Trek gallery</h2>
+        <div class="thumb-grid">
+          {% for src in trek.images %}
+          <a href="{{ img(src, 1600) }}" class="lightbox-item" data-lightbox="trek" data-caption="{{ trek.name }} – photo {{ loop.index }}">
+            <img src="{{ img(src, 500) }}" alt="{{ trek.name }} photo {{ loop.index }}" loading="lazy" width="500" height="375">
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      {# -------------------------------------------------------------- Booking sidebar #}
+      <aside class="col-lg-4">
+        <div class="booking-card" id="book">
+          <div class="d-flex align-items-baseline gap-2">
+            <span class="price-lg">{{ trek.price|inr }}</span><span class="text-muted">/ person</span>
+          </div>
+          <p class="small text-muted mb-3">Taxes included · Free cancellation up to 7 days before</p>
+
+          <h3 class="h6 fw-semibold mb-2"><i class="fa-regular fa-calendar-days text-accent"></i> Upcoming dates</h3>
+          {% if dates %}
+          <div class="date-list" role="radiogroup" aria-label="Choose a departure date">
+            {% for d in dates %}
+            <label class="date-option">
+              <input type="radio" name="date" value="{{ d.isoformat() }}" {% if loop.first %}checked{% endif %}>
+              <span><strong>{{ d.strftime('%a, %d %b %Y') }}</strong><small>Seats available</small></span>
+            </label>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="small text-muted">No fixed departures right now. Contact us for custom dates.</p>
+          {% endif %}
+
+          <div class="d-grid gap-2 mt-3">
+            <a class="btn btn-accent btn-lg" id="bookNowBtn" href="{{ url_for('checkout', slug=trek.slug) }}"
+               data-base="{{ url_for('checkout', slug=trek.slug) }}">
+              <i class="fa-solid fa-ticket me-1"></i> Book Now
+            </a>
+            <a class="btn btn-whatsapp btn-lg" href="{{ whatsapp_link(wa_text) }}" target="_blank" rel="noopener">
+              <i class="fa-brands fa-whatsapp me-1"></i> Chat on WhatsApp
+            </a>
+            <a class="btn btn-link text-dark" href="{{ url_for('contact', trek=trek.name) }}">Send an enquiry</a>
+          </div>
+          <hr>
+          <ul class="list-unstyled small mb-0 trust-list">
+            <li><i class="fa-solid fa-shield-halved"></i> Certified trek leaders</li>
+            <li><i class="fa-solid fa-lock"></i> Secure payment with Razorpay</li>
+            <li><i class="fa-solid fa-headset"></i> Help on {{ site.phone }}</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+{% if related %}
+<section class="section bg-soft">
+  <div class="container">
+    <h2 class="section-title mb-4">You may also like</h2>
+    <div class="row g-4">
+      {% for t in related %}<div class="col-sm-6 col-lg-4">{{ trek_card(t, levels, category_map) }}</div>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# Sticky booking bar on small screens #}
+<div class="mobile-book-bar d-lg-none">
+  <div><small class="text-muted d-block lh-1">From</small><strong>{{ trek.price|inr }}</strong></div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-whatsapp" href="{{ whatsapp_link(wa_text) }}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+    <a class="btn btn-accent" href="#book">Book Now</a>
+  </div>
+</div>
+{% endblock %}

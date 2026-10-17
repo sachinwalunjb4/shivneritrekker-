@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% from "partials/_macros.html" import page_header, trek_card with context %}
+{% block title %}All Treks & Tours – {{ site.name }}{% endblock %}
+{% block meta_description %}Browse and filter Sahyadri, Himalayan, Nepal, monsoon, backpacking, school and corporate treks by category, difficulty, duration and price.{% endblock %}
+{% block nav_class %}nav-transparent{% endblock %}
+
+{% block content %}
+{{ page_header('All Treks', 'Filter by category, location, difficulty and duration to find the right trek.', 'header_tours') }}
+
+<section class="section pt-4">
+  <div class="container">
+    <form class="filter-bar" id="trekFilters" role="search" aria-label="Filter treks" onsubmit="return false">
+      <div class="row g-2 align-items-end">
+        <div class="col-lg-3 col-md-6">
+          <label class="form-label small fw-semibold" for="fQ">Search</label>
+          <input class="form-control" id="fQ" name="q" type="search" placeholder="Name or region" value="{{ selected.q }}">
+        </div>
+        <div class="col-lg-2 col-md-6">
+          <label class="form-label small fw-semibold" for="fCat">Category</label>
+          <select class="form-select" id="fCat" name="category">
+            <option value="">All</option>
+            {% for c in categories %}<option value="{{ c.slug }}" {% if selected.category == c.slug %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col-lg-2 col-md-4">
+          <label class="form-label small fw-semibold" for="fTag">Location / Season</label>
+          <select class="form-select" id="fTag" name="tag">
+            <option value="">Any</option>
+            {% for f in location_filters %}<option value="{{ f.slug }}" {% if selected.tag == f.slug %}selected{% endif %}>{{ f.name }}</option>{% endfor %}
+            <option value="nepal" {% if selected.tag == 'nepal' %}selected{% endif %}>Nepal</option>
+          </select>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6">
+          <label class="form-label small fw-semibold" for="fDiff">Difficulty</label>
+          <select class="form-select" id="fDiff" name="difficulty">
+            <option value="">Any</option>
+            {% for name, lvl in levels.items() %}<option value="{{ lvl }}">{{ name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col-lg-1 col-md-4 col-6">
+          <label class="form-label small fw-semibold" for="fDays">Duration</label>
+          <select class="form-select" id="fDays" name="days">
+            <option value="">Any</option>
+            <option value="1-1">1 day</option>
+            <option value="2-3">2–3 days</option>
+            <option value="4-8">4–8 days</option>
+            <option value="9-99">9+ days</option>
+          </select>
+        </div>
+        <div class="col-lg-2 col-md-6">
+          <label class="form-label small fw-semibold" for="fSort">Sort by</label>
+          <select class="form-select" id="fSort" name="sort">
+            <option value="">Recommended</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+            <option value="days-asc">Duration: shortest</option>
+            <option value="rating-desc">Top rated</option>
+          </select>
+        </div>
+      </div>
+    </form>
+
+    <div class="d-flex justify-content-between align-items-center my-4 gap-2 flex-wrap">
+      <p class="mb-0 text-muted" aria-live="polite"><strong id="resultCount">{{ treks|length }}</strong> treks found
+        <button type="button" class="btn btn-link btn-sm p-0 ms-2 d-none" id="clearFilters">Clear filters</button></p>
+      <div class="btn-group view-toggle" role="group" aria-label="Layout">
+        <button type="button" class="btn btn-outline-dark btn-sm active" data-view="grid" aria-pressed="true"><i class="fa-solid fa-grip"></i><span class="visually-hidden">Grid view</span></button>
+        <button type="button" class="btn btn-outline-dark btn-sm" data-view="list" aria-pressed="false"><i class="fa-solid fa-list"></i><span class="visually-hidden">List view</span></button>
+      </div>
+    </div>
+
+    <div class="row g-4 trek-grid" id="trekGrid">
+      {% for t in treks %}
+      <div class="col-sm-6 col-lg-4 trek-col" data-order="{{ loop.index0 }}">{{ trek_card(t, levels, category_map) }}</div>
+      {% endfor %}
+    </div>
+    <div class="empty-state d-none" id="emptyState">
+      <i class="fa-solid fa-mountain"></i>
+      <h3 class="h5">No treks match those filters</h3>
+      <p class="text-muted">Try removing a filter, or <a href="{{ url_for('contact') }}">tell us what you're looking for</a>.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

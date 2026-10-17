@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from "partials/_macros.html" import page_header with context %}
+{% block title %}Gallery – {{ site.name }}{% endblock %}
+{% block meta_description %}Photos and videos from our Sahyadri, monsoon, Himalayan and camping trips.{% endblock %}
+{% block nav_class %}nav-transparent{% endblock %}
+
+{% block content %}
+{{ page_header('Gallery', 'Moments from the trail, shared by our trekkers and leaders.', 'header_gallery') }}
+
+<section class="section pt-5">
+  <div class="container">
+    <div class="filter-pills mb-4" role="group" aria-label="Filter photos">
+      {% for key, label in filters %}
+      <button type="button" class="btn btn-pill {% if loop.first %}active{% endif %}" data-filter="{{ key }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ label }}</button>
+      {% endfor %}
+    </div>
+
+    <div class="gallery-grid" id="galleryGrid">
+      {% for p in photos %}
+      <a href="{{ img(p.image, 1600) }}" class="gallery-item lightbox-item" data-lightbox="gallery" data-cat="{{ p.cat }}" data-caption="{{ p.caption }}">
+        <img src="{{ img(p.image, 600) }}" alt="{{ p.caption }}" loading="lazy" width="600" height="450">
+        <span class="gallery-item__caption"><i class="fa-solid fa-expand"></i> {{ p.caption }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section bg-soft">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow-dark">Watch</span>
+        <h2 class="section-title">Trek Highlights</h2>
+      </div>
+      <a href="{{ site.youtube }}" target="_blank" rel="noopener" class="link-arrow">Our YouTube channel <i class="fa-brands fa-youtube"></i></a>
+    </div>
+    <div class="row g-4">
+      {% for v in videos %}
+      <div class="col-md-6 col-lg-4">
+        <div class="video-card">
+          {# The iframe loads only on click: faster pages, no layout shift (fixed 16:9 ratio). #}
+          <div class="ratio ratio-16x9 yt-lite" data-youtube-id="{{ v.youtube_id }}" data-title="{{ v.title }}">
+            <img src="{{ img(v.poster, 900) }}" alt="" loading="lazy">
+            <button type="button" class="yt-play" aria-label="Play video: {{ v.title }}"><i class="fa-solid fa-play"></i></button>
+          </div>
+          <h3 class="h6 mt-3 mb-0">{{ v.title }}</h3>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

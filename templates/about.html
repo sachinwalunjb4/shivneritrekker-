@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% from "partials/_macros.html" import page_header with context %}
+{% block title %}About Us & Team – {{ site.name }}{% endblock %}
+{% block meta_description %}Meet the {{ site.name }} team: certified trek leaders and planners running safe, small-group treks since 2014.{% endblock %}
+{% block nav_class %}nav-transparent{% endblock %}
+
+{% block content %}
+{{ page_header('About Us', 'Ten years of safe, small-group adventures in the mountains.', 'header_about') }}
+
+<section class="section">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6 reveal">
+        <span class="eyebrow-dark">Our story</span>
+        <h2 class="section-title">From weekend fort hikes to Himalayan summits</h2>
+        <p>{{ site.name }} started in 2014 as a group of friends from Pune who spent every monsoon weekend exploring the forts of the Sahyadris. Friends of friends kept asking to join, and soon we were running a weekend batch every Saturday.</p>
+        <p>Today we run more than 300 departures a year, from one-day waterfall treks near Mumbai to Everest Base Camp in Nepal. We still lead every trek ourselves, keep groups small and treat the mountains and their villages with respect.</p>
+        <div class="row g-3 mt-2">
+          <div class="col-6"><div class="stat stat-light"><strong>12,000+</strong><span>Trekkers</span></div></div>
+          <div class="col-6"><div class="stat stat-light"><strong>300+</strong><span>Departures / year</span></div></div>
+        </div>
+      </div>
+      <div class="col-lg-6 reveal">
+        <div class="about-collage">
+          <img src="{{ img('about_1', 800) }}" alt="Misty Sahyadri ridge" loading="lazy" width="800" height="1000">
+          <img src="{{ img('about_2', 800) }}" alt="Camp in the mountains" loading="lazy" width="800" height="1000">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-soft">
+  <div class="container">
+    <div class="row g-4">
+      {% for icon, title, text in [
+        ('fa-bullseye', 'Our mission', 'Make the outdoors safe, accessible and meaningful for everyone, from first-time trekkers to mountaineers.'),
+        ('fa-eye', 'Our vision', 'A community of responsible trekkers who protect the trails and support the people who live along them.'),
+        ('fa-hand-holding-heart', 'Our values', 'Safety before summits. Honest pricing. Leave no trace. Fair pay for local guides and porters.')] %}
+      <div class="col-md-4 reveal">
+        <div class="feature h-100">
+          <span class="feature__icon"><i class="fa-solid {{ icon }}"></i></span>
+          <h3 class="h5">{{ title }}</h3>
+          <p class="text-muted mb-0">{{ text }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <span class="eyebrow-dark">The people behind your trek</span>
+      <h2 class="section-title">Meet Our Team</h2>
+    </div>
+    <div class="row g-4">
+      {% for m in team %}
+      <div class="col-sm-6 col-lg-3 reveal">
+        <div class="team-card">
+          <div class="team-card__photo"><img src="{{ img(m.photo, 500) }}" alt="{{ m.name }}" loading="lazy" width="500" height="500"></div>
+          <div class="team-card__body">
+            <h3 class="h5 mb-0">{{ m.name }}</h3>
+            <span class="role">{{ m.role }}</span>
+            <p class="small text-muted mt-2 mb-0">{{ m.bio }}</p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+    <h2 class="h3 mb-0 text-white">Ready for your next adventure?</h2>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('tours') }}" class="btn btn-light">Browse Treks</a>
+      <a href="{{ url_for('contact') }}" class="btn btn-outline-light">Contact Us</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
