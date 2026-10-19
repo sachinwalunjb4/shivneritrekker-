@@ -64,21 +64,84 @@
           {% for h in trek.highlights %}<li><i class="fa-solid fa-circle-check"></i> {{ h }}</li>{% endfor %}
         </ul>
 
-        <h2 class="h3 mt-5 mb-3" id="itinerary">Day-by-day itinerary</h2>
-        <div class="accordion itinerary" id="itineraryAcc">
-          {% for step in trek.itinerary %}
-          <div class="accordion-item">
-            <h3 class="accordion-header">
-              <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse"
-                      data-bs-target="#step{{ loop.index }}" aria-expanded="{{ 'true' if loop.first else 'false' }}" aria-controls="step{{ loop.index }}">
-                <span class="step-no">{{ '%02d'|format(loop.index) }}</span> {{ step.title }}
-              </button>
-            </h3>
-            <div id="step{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" data-bs-parent="#itineraryAcc">
-              <div class="accordion-body">{{ step.desc }}</div>
+        {% macro step_facts(step) %}
+          {% if step.altitude or step.drive or step.trek or step.stay %}
+          <ul class="day-facts">
+            {% if step.altitude %}
+              {% if step.altitude is string %}
+              <li><i class="fa-solid fa-mountain"></i><span><b>Altitude:</b> {{ step.altitude }}</span></li>
+              {% else %}
+              <li><i class="fa-solid fa-mountain"></i><span><b>Altitude:</b>
+                <ul>{% for a in step.altitude %}<li>{{ a }}</li>{% endfor %}</ul></span></li>
+              {% endif %}
+            {% endif %}
+            {% if step.drive %}<li><i class="fa-solid fa-car-side"></i><span><b>Drive:</b> {{ step.drive }}</span></li>{% endif %}
+            {% if step.trek %}<li><i class="fa-solid fa-person-hiking"></i><span><b>Trek:</b> {{ step.trek }}</span></li>{% endif %}
+            {% if step.stay %}<li><i class="fa-solid fa-bed"></i><span><b>Stay:</b> {{ step.stay }}</span></li>{% endif %}
+          </ul>
+          {% endif %}
+        {% endmacro %}
+
+        <div class="itinerary-box mt-5" id="itinerary">
+          <h2 class="h3 mb-3">{{ trek.name }} Itinerary</h2>
+          <ul class="nav itin-tabs mb-4" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="itinQuickTab" data-bs-toggle="pill" data-bs-target="#itinQuick" type="button" role="tab" aria-controls="itinQuick" aria-selected="true">Quick</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="itinDetailTab" data-bs-toggle="pill" data-bs-target="#itinDetail" type="button" role="tab" aria-controls="itinDetail" aria-selected="false">Detailed</button>
+            </li>
+          </ul>
+
+          <div class="tab-content">
+            {# ---------- Quick view: every day at a glance #}
+            <div class="tab-pane fade show active" id="itinQuick" role="tabpanel" aria-labelledby="itinQuickTab">
+              <ol class="quick-days">
+                {% for step in trek.itinerary %}
+                <li>
+                  <span class="day-badge">{{ step.label }}</span>
+                  <div>
+                    <h3 class="h6 mb-1">{{ step.title }}</h3>
+                    {% if step.altitude or step.drive or step.trek or step.stay %}{{ step_facts(step) }}
+                    {% else %}<p class="mb-0 text-muted">{{ step.desc }}</p>{% endif %}
+                  </div>
+                </li>
+                {% endfor %}
+              </ol>
+              {% if trek.itinerary_notes %}
+              <div class="itin-notes">
+                <h3 class="h6">Note:</h3>
+                <ul>{% for n in trek.itinerary_notes %}<li>{{ n }}</li>{% endfor %}</ul>
+              </div>
+              {% endif %}
+            </div>
+
+            {# ---------- Detailed view: one tab per day #}
+            <div class="tab-pane fade" id="itinDetail" role="tabpanel" aria-labelledby="itinDetailTab">
+              <ul class="nav day-tabs mb-3" role="tablist">
+                {% for step in trek.itinerary %}
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link {% if loop.first %}active{% endif %}" data-bs-toggle="pill" data-bs-target="#day{{ loop.index }}"
+                          type="button" role="tab" aria-controls="day{{ loop.index }}" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ step.label }}</button>
+                </li>
+                {% endfor %}
+              </ul>
+              <div class="tab-content">
+                {% for step in trek.itinerary %}
+                <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="day{{ loop.index }}" role="tabpanel">
+                  <h3 class="h5 mb-2">{{ step.title }}</h3>
+                  {{ step_facts(step) }}
+                  <div class="day-details">
+                    {% for p in (step.details or [step.desc]) %}<p>{{ p }}</p>{% endfor %}
+                  </div>
+                  {% if step.image %}
+                  <img class="day-photo" src="{{ img(step.image, 900) }}" alt="{{ trek.name }}, {{ step.label }}: {{ step.title }}" loading="lazy" width="900" height="560">
+                  {% endif %}
+                </div>
+                {% endfor %}
+              </div>
             </div>
           </div>
-          {% endfor %}
         </div>
 
         <div class="row g-4 mt-4">

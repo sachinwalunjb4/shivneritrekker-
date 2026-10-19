@@ -1,5 +1,5 @@
 """
-Shivneri Trekkers – trekking company website (Flask).
+Rock & Ridge Expeditions – trekking company website (Flask).
 
 Run:  python app.py      (or)  flask --app app run --debug
 """
@@ -37,14 +37,14 @@ from images import img
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") or secrets.token_hex(32)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-log = logging.getLogger("shivneri-trekkers")
+log = logging.getLogger("rock-ridge-expeditions")
 
 SITE = {
-    "name": os.getenv("SITE_NAME", "Shivneri Trekkers"),
+    "name": os.getenv("SITE_NAME", "Rock & Ridge Expeditions"),
     "tagline": "Treks & Expeditions",
     "contact_person": os.getenv("CONTACT_PERSON", "Santosh Dukare"),
     "phone": os.getenv("CONTACT_PHONE", "+91 98811 43180"),
-    "email": os.getenv("CONTACT_EMAIL", "hello@shivneritrekkers.example"),
+    "email": os.getenv("CONTACT_EMAIL", "hello@rockandridgeexpeditions.example"),
     "address": os.getenv("CONTACT_ADDRESS", "Narayangaon, Junnar, Pune, Maharashtra 410504"),
     "hours": "Mon–Sat, 10:00 AM – 7:00 PM",
     "whatsapp": re.sub(r"\D", "", os.getenv("WHATSAPP_NUMBER", "919881143180")),
@@ -152,7 +152,7 @@ def send_admin_email(subject, body, reply_to=None):
     """
     host = os.getenv("SMTP_HOST")
     admin = os.getenv("ADMIN_EMAIL", SITE["email"])
-    sender = os.getenv("MAIL_FROM", os.getenv("SMTP_USERNAME", "no-reply@shivneritrekkers.example"))
+    sender = os.getenv("MAIL_FROM", os.getenv("SMTP_USERNAME", "no-reply@rockandridgeexpeditions.example"))
 
     msg = EmailMessage()
     msg["Subject"] = subject

@@ -1,4 +1,4 @@
-/* Shivneri Trekkers – site-wide JavaScript (no dependencies beyond Bootstrap). */
+/* Rock & Ridge Expeditions – site-wide JavaScript (no dependencies beyond Bootstrap). */
 (() => {
   "use strict";
 

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Shivneri Trekkers – main stylesheet (built on Bootstrap 5)
+   Rock & Ridge Expeditions – main stylesheet (built on Bootstrap 5)
    ========================================================================== */
 :root {
   --forest: #14532d;
@@ -242,6 +242,30 @@ body:has(.nav-solid) main { padding-top: var(--nav-h); }
 .lead-sm { font-size: 1.05rem; line-height: 1.75; color: #36403c; }
 .highlights { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
 .highlights i { color: var(--forest); margin-right: 6px; }
+
+/* Itinerary: Quick / Detailed tabs */
+.itinerary-box { border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow-sm); }
+.itin-tabs, .day-tabs { gap: 8px; flex-wrap: wrap; }
+.itin-tabs { background: var(--soft); padding: 8px; border-radius: 12px; }
+.itin-tabs .nav-link, .day-tabs .nav-link { border-radius: 999px; font-family: var(--font-head); font-weight: 500; font-size: .9rem; color: var(--ink); background: #fff; border: 1px solid var(--line); padding: .4rem 1.1rem; }
+.day-tabs .nav-link { background: var(--soft); padding: .3rem .9rem; font-size: .85rem; }
+.itin-tabs .nav-link.active, .day-tabs .nav-link.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.quick-days { list-style: none; padding: 0; margin: 0; }
+.quick-days > li { display: grid; grid-template-columns: 84px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px dashed var(--line); }
+.quick-days > li:last-child { border-bottom: 0; }
+.day-badge { align-self: start; display: inline-block; text-align: center; background: var(--accent); color: #fff; font-size: .75rem; font-weight: 600; padding: .3rem .4rem; border-radius: 999px; white-space: nowrap; }
+.day-facts { list-style: none; padding: 0; margin: 0 0 .75rem; font-size: .92rem; color: #36403c; }
+.day-facts > li { display: flex; gap: 8px; margin-bottom: 3px; }
+.day-facts > li > i { color: var(--forest); width: 16px; margin-top: 4px; font-size: .8rem; }
+.day-facts ul { margin: 2px 0 0; padding-left: 1.1rem; }
+.day-details p { line-height: 1.75; color: #36403c; text-align: justify; }
+.day-photo { width: 100%; height: auto; border-radius: 12px; object-fit: cover; aspect-ratio: 16 / 10; }
+.itin-notes { background: var(--soft); border-radius: 12px; padding: 14px 18px; margin-top: 16px; font-size: .92rem; }
+.itin-notes ul { margin: 0; padding-left: 1.1rem; }
+@media (max-width: 575.98px) {
+  .itinerary-box { padding: 16px; }
+  .quick-days > li { grid-template-columns: 76px 1fr; }
+}
 
 .itinerary .accordion-item { border: 1px solid var(--line); border-radius: 12px !important; margin-bottom: 10px; overflow: hidden; }
 .itinerary .accordion-button { font-family: var(--font-head); font-weight: 600; gap: 12px; }

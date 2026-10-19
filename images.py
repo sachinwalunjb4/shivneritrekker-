@@ -76,6 +76,10 @@ IMAGES = {
     "andharban_1": "forest", "andharban_2": "mist", "andharban_3": "waterfall", "andharban_4": "green",
     "hampta_1": "valley", "hampta_2": "snow", "hampta_3": "camp", "hampta_4": "alps",
     "kedarkantha_1": "snow", "kedarkantha_2": "alps", "kedarkantha_3": "tent", "kedarkantha_4": "peaks",
+    "harkidun_1": "snow", "harkidun_2": "valley", "harkidun_3": "forest", "harkidun_4": "camp",
+    # Har Ki Dun day-by-day itinerary photos
+    "harkidun_day1": "forest", "harkidun_day2": "trail", "harkidun_day3": "green", "harkidun_day4": "snow",
+    "harkidun_day5": "valley", "harkidun_day6": "tent", "harkidun_day7": "range",
     "ebc_1": "alps", "ebc_2": "snow", "ebc_3": "peaks", "ebc_4": "range",
     "spiti_1": "valley", "spiti_2": "lake", "spiti_3": "range", "spiti_4": "tent",
     "yunam_1": "climber", "yunam_2": "snow", "yunam_3": "alps", "yunam_4": "stars",

@@ -4,6 +4,7 @@ Static content for the site: treks, categories, team, gallery and videos.
 Everything here is plain Python data so it is easy to edit. When you outgrow
 it, move it into a database (SQLite / PostgreSQL) and keep the same shape.
 """
+import re
 from datetime import date, timedelta
 
 # Image names refer to entries in images.py – edit images there.
@@ -339,6 +340,152 @@ TREKS = [
         "exclusions": ["Travel to Dehradun", "Backpack offloading"] + STANDARD_EXCLUSIONS,
     },
     {
+        "slug": "har-ki-dun-trek",
+        "name": "Har Ki Dun Trek",
+        "category": "himalayan",
+        "tags": ["trending"],
+        "region": "Uttarkashi, Uttarakhand",
+        "start_point": "Dehradun",
+        "duration_days": 7,
+        "duration": "7 Days / 6 Nights",
+        "difficulty": "Moderate",
+        "altitude": "11,600 ft",
+        "price": 12499,
+        "rating": 4.9,
+        "season_months": [3, 4, 5, 6, 9, 10, 11, 12],
+        "weekday": 5,
+        "images": ["harkidun_1", "harkidun_2", "harkidun_3", "harkidun_4"],
+        "summary": "The 'Valley of Gods': ancient villages, the Tons river and views of Swargarohini.",
+        "overview": (
+            "Har Ki Dun is a cradle-shaped valley at the foot of Swargarohini in Govind "
+            "National Park. The trail follows the Tons river past centuries-old wooden "
+            "villages like Osla, through pine and walnut forest, to open meadows ringed by "
+            "snow peaks. It is a gentle-gradient Himalayan trek that works well in both "
+            "summer and winter."
+        ),
+        "highlights": [
+            "Views of Swargarohini, Black Peak and Bandarpoonch",
+            "Osla village and its ancient Someshwar temple",
+            "Riverside trail along the Tons through Govind National Park",
+            "Jaundar glacier seen from the Har Ki Dun meadow",
+        ],
+        # Each day can have: day, title, altitude (str or list), drive, trek, stay,
+        # desc (one line for the quick view), details (paragraphs) and image.
+        "itinerary": [
+            {
+                "day": 1, "title": "Dehradun to Sankri",
+                "altitude": "Sankri: 1,950 m / 6,400 ft",
+                "drive": "200 km | 9–10 hrs",
+                "stay": "Guest house",
+                "desc": "A full-day scenic drive via Mussoorie and Purola to the base village of Sankri.",
+                "details": [
+                    "Meet at Dehradun at 6:00 AM. If you are coming from Delhi, an overnight bus or "
+                    "train to Dehradun gets you here on time. Sankri is about 200 km away and the "
+                    "drive takes most of the day.",
+                    "The road climbs past Mussoorie and Kempty Falls, then drops into the Yamuna and "
+                    "Tons valleys through Naugaon, Purola, Mori and Netwar. Pine forest lines most of "
+                    "the route, and we stop for lunch at a roadside dhaba. Finish important calls at "
+                    "Purola – after that, only BSNL and Jio work, and only patchily.",
+                    "The last 20 km after the Govind National Park checkpoint are the most scenic. "
+                    "We reach Sankri around 6:00 PM. The village has views of Swargarohini and a "
+                    "small market where you can pick up any last-minute gear.",
+                ],
+                "image": "harkidun_day1",
+            },
+            {
+                "day": 2, "title": "Sankri to Dharkot, trek to Osla village",
+                "altitude": ["Osla: 2,750 m / 9,000 ft", "Dharkot: 2,500 m / 8,400 ft"],
+                "drive": "Sankri to Dharkot, 24 km | 2 hrs",
+                "trek": "8 km | 5–6 hrs",
+                "stay": "Homestay",
+                "desc": "Drive to the roadhead and walk along the Tons river to the old village of Osla.",
+                "details": [
+                    "After breakfast we drive to Dharkot, the roadhead, and start walking. The trail "
+                    "follows the Tons river upstream through walnut, chestnut and pine trees, with "
+                    "a few small streams to cross.",
+                    "Osla is one of the oldest villages in the valley, known for its carved wooden "
+                    "houses and the Someshwar temple. We stay in a village homestay tonight.",
+                ],
+                "image": "harkidun_day2",
+            },
+            {
+                "day": 3, "title": "Osla to Seematra",
+                "altitude": "Seematra: 3,250 m / 10,800 ft",
+                "trek": "7 km | 4–5 hrs",
+                "stay": "Tents",
+                "desc": "A climb past terraced fields to the Seematra meadow camp.",
+                "details": [
+                    "The trail climbs above Osla through terraced fields of millet and potato, with "
+                    "the valley opening up behind you. After the fields, a forest section leads to "
+                    "the meadow of Seematra.",
+                    "We camp at Seematra for two nights, which also helps you acclimatise before "
+                    "the walk into Har Ki Dun.",
+                ],
+                "image": "harkidun_day3",
+            },
+            {
+                "day": 4, "title": "Seematra to Har Ki Dun and back",
+                "altitude": "Har Ki Dun: 3,500 m / 11,600 ft",
+                "trek": "8 km (both ways) | 6–7 hrs",
+                "stay": "Tents",
+                "desc": "The big day: walk into the Har Ki Dun valley and return to camp.",
+                "details": [
+                    "We start early and walk to the Har Ki Dun meadow, where the Har Ki Dun and "
+                    "Maninda streams meet. Swargarohini, Black Peak and Hata peak rise above the "
+                    "valley, and the Jaundar glacier is visible further up.",
+                    "Spend time exploring the meadow and the small Mahadev temple, then walk back "
+                    "to Seematra for the night.",
+                ],
+                "image": "harkidun_day4",
+            },
+            {
+                "day": 5, "title": "Seematra to Pauni Gharat",
+                "altitude": "Pauni Gharat: 2,500 m / 8,300 ft",
+                "trek": "8–9 km | 4–5 hrs",
+                "stay": "Tents",
+                "desc": "A mostly downhill walk back along the river to the Pauni Gharat camp.",
+                "details": [
+                    "We descend past Osla and continue along the river to Pauni Gharat, named after "
+                    "the old water-powered flour mills (gharats) along the stream.",
+                ],
+                "image": "harkidun_day5",
+            },
+            {
+                "day": 6, "title": "Pauni Gharat to Dharkot, drive to Sankri",
+                "altitude": "Sankri: 1,950 m / 6,400 ft",
+                "trek": "3–4 km | 2–3 hrs",
+                "drive": "24 km | 2 hrs",
+                "stay": "Guest house",
+                "desc": "A short walk out to the roadhead and a drive back to Sankri.",
+                "details": [
+                    "A short final walk takes us back to Dharkot, where the vehicles wait to drive "
+                    "us to Sankri. The afternoon is free to rest, shop in the market or simply "
+                    "enjoy a hot shower. Celebration dinner in the evening.",
+                ],
+                "image": "harkidun_day6",
+            },
+            {
+                "day": 7, "title": "Sankri to Dehradun",
+                "drive": "200 km | 9–10 hrs",
+                "desc": "Saying goodbye to the mountains – drive back to Dehradun by evening.",
+                "details": [
+                    "We leave Sankri after an early breakfast and reach Dehradun between 6:00 and "
+                    "8:00 PM. Please book onward travel for after 9:00 PM, or the next day.",
+                ],
+                "image": "harkidun_day7",
+            },
+        ],
+        "itinerary_notes": [
+            "Keep a buffer day in your travel plan in case of bad weather or road blocks.",
+            "If the buffer day is not needed, you can use it to explore Dehradun or Mussoorie.",
+            "Distances, altitudes and trekking hours are approximate and rounded off.",
+            "Carry an original government ID and a photocopy for the forest permits.",
+            "If you are flying in, arrive in Dehradun a day early.",
+        ],
+        "inclusions": ["Dehradun to Dehradun transport", "All meals from Day 1 dinner to Day 7 breakfast", "Guest house, homestay and tents on a sharing basis", "Govind National Park permits"] + STANDARD_INCLUSIONS,
+        "exclusions": ["Travel to Dehradun", "Backpack offloading", "Meals during the drives"] + STANDARD_EXCLUSIONS,
+    },
+    {
         "slug": "everest-base-camp-trek",
         "name": "Everest Base Camp Trek",
         "category": "himalayan",
@@ -509,6 +656,28 @@ TREKS = [
     },
 ]
 TREK_MAP = {t["slug"]: t for t in TREKS}
+
+
+def _prepare_itineraries():
+    """Give every itinerary step a short `label` for the day badges.
+
+    Uses `day` when set, else a "Day 3–4: ..." prefix in the title (which is
+    then removed from the title), else the step number.
+    """
+    for trek in TREKS:
+        for i, step in enumerate(trek["itinerary"], start=1):
+            if "day" in step:
+                step["label"] = f"Day {step['day']}"
+                continue
+            m = re.match(r"(Days? [\d–-]+):\s*(.+)", step["title"])
+            if m:
+                step["label"], step["title"] = m.group(1), m.group(2)
+            else:
+                step["label"] = f"Step {i}"
+        trek.setdefault("itinerary_notes", [])
+
+
+_prepare_itineraries()
 
 
 def upcoming_dates(trek, count=4, today=None):

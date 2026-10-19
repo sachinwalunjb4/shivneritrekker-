@@ -1,4 +1,4 @@
-# Shivneri Trekkers – Trekking Company Website
+# Rock & Ridge Expeditions – Trekking Company Website
 
 A responsive trekking website built with **Flask**, **Bootstrap 5**, Font Awesome and vanilla JavaScript.
 
