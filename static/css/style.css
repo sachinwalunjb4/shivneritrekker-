@@ -295,6 +295,25 @@ body:has(.nav-solid) main { padding-top: var(--nav-h); }
 .date-option input { accent-color: var(--forest); }
 .date-option span { display: flex; flex-direction: column; line-height: 1.2; }
 .date-option small { color: #2f9e44; font-size: .78rem; }
+/* Add-ons: trek page panel and checkout options */
+.btn-addons { background: var(--accent); color: #fff; border-radius: 10px; font-weight: 500; }
+.btn-addons:hover, .btn-addons:focus-visible { background: var(--accent-dark); color: #fff; }
+.btn-addons:not(.collapsed) .fa-circle-plus::before { content: "\f056"; } /* circle-minus when open */
+.addon-table { list-style: none; padding: 0; margin: 0 0 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); }
+.addon-table li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); font-weight: 600; font-size: .95rem; }
+.addon-table li:last-child { border-bottom: 0; }
+.info-btn { background: none; border: 0; padding: 0 0 0 6px; color: var(--ink); font-size: .95rem; line-height: 1; }
+.info-btn:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px; border-radius: 50%; }
+.addon-options { display: grid; gap: 8px; }
+.addon-option { display: grid; grid-template-columns: auto auto 1fr auto; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; cursor: pointer; margin: 0; }
+.addon-option .form-check-input { margin: 0; }
+.addon-option > i { color: var(--forest); width: 18px; text-align: center; }
+.addon-option span { display: flex; flex-direction: column; }
+.addon-option small { color: var(--muted); font-size: .8rem; }
+.addon-option b { white-space: nowrap; font-family: var(--font-head); font-size: .95rem; }
+.addon-option:has(input:checked) { border-color: var(--accent); background: #fff6f1; }
+@media (max-width: 575.98px) { .addon-option { grid-template-columns: auto 1fr auto; } .addon-option > i { display: none; } }
+
 .trust-list li { margin-bottom: 6px; color: var(--muted); }
 .trust-list i { color: var(--forest); width: 20px; }
 

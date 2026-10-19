@@ -61,6 +61,25 @@ STANDARD_EXCLUSIONS = [
     "Travel insurance",
 ]
 
+# Optional extras a trekker can add at checkout. Prices are set per trek in its
+# "addons" dict (per person); only the add-ons listed there are offered.
+ADDONS = {
+    "insurance": {"name": "Insurance", "icon": "fa-shield-heart",
+                  "info": "Trek insurance covering accidents, medical emergencies and evacuation during the trek."},
+    "transport": {"name": "Transport", "icon": "fa-van-shuttle",
+                  "info": "Shared vehicle from {start} to the trailhead and back, as per the itinerary."},
+    "offload": {"name": "Offload", "icon": "fa-suitcase-rolling",
+                "info": "A mule or porter carries your backpack (up to 10 kg) between campsites. You carry only a daypack."},
+}
+
+# Tent upgrades. A trek's "tents" dict lists the options it offers with the
+# extra price per person; the first option is the default (usually ₹0).
+TENT_TYPES = {
+    "triple": {"name": "Triple Sharing Tent", "info": "Three trekkers share a three-person tent. Included in the trek fee."},
+    "twin": {"name": "Twin Sharing Tent", "info": "Two trekkers share a tent, giving more room for you and your gear."},
+    "single": {"name": "Single Occupancy Tent", "info": "A tent to yourself for the whole trek."},
+}
+
 
 TREKS = [
     # ---------------------------------------------------------------- Sahyadri
@@ -302,8 +321,10 @@ TREKS = [
             {"title": "Day 4: Shea Goru to Chatru, Chandratal", "desc": "Trek to Chatru and drive to Chandratal lake if the road is open."},
             {"title": "Day 5: Drive back to Manali", "desc": "Cross Rohtang/Atal Tunnel and reach Manali by evening."},
         ],
+        "addons": {"insurance": 280, "offload": 1800},
+        "tents": {"triple": 0, "twin": 700, "single": 1500},
         "inclusions": ["All meals during the trek", "Tents, sleeping bags and mats", "Manali to Manali transport", "Mules for common gear"] + STANDARD_INCLUSIONS,
-        "exclusions": ["Travel to Manali", "Personal porter", "Stay in Manali"] + STANDARD_EXCLUSIONS,
+        "exclusions": ["Travel to Manali", "Backpack offloading (available as an add-on)", "Stay in Manali"] + STANDARD_EXCLUSIONS,
     },
     {
         "slug": "kedarkantha-trek",
@@ -336,8 +357,10 @@ TREKS = [
             {"title": "Day 5: Hargaon to Sankri", "desc": "Descend to Sankri; celebration dinner."},
             {"title": "Day 6: Sankri to Dehradun", "desc": "Drive back to Dehradun by evening."},
         ],
+        "addons": {"insurance": 280, "offload": 1800},
+        "tents": {"triple": 0, "twin": 800, "single": 1600},
         "inclusions": ["Dehradun to Dehradun transport", "All meals from Day 1 dinner to Day 6 breakfast", "Tents, sleeping bags, microspikes and gaiters"] + STANDARD_INCLUSIONS,
-        "exclusions": ["Travel to Dehradun", "Backpack offloading"] + STANDARD_EXCLUSIONS,
+        "exclusions": ["Travel to Dehradun", "Backpack offloading (available as an add-on)"] + STANDARD_EXCLUSIONS,
     },
     {
         "slug": "har-ki-dun-trek",
@@ -482,8 +505,10 @@ TREKS = [
             "Carry an original government ID and a photocopy for the forest permits.",
             "If you are flying in, arrive in Dehradun a day early.",
         ],
-        "inclusions": ["Dehradun to Dehradun transport", "All meals from Day 1 dinner to Day 7 breakfast", "Guest house, homestay and tents on a sharing basis", "Govind National Park permits"] + STANDARD_INCLUSIONS,
-        "exclusions": ["Travel to Dehradun", "Backpack offloading", "Meals during the drives"] + STANDARD_EXCLUSIONS,
+        "addons": {"insurance": 280, "transport": 2200, "offload": 2000},
+        "tents": {"triple": 0, "twin": 800, "single": 1600},
+        "inclusions": ["All meals from Day 1 dinner to Day 7 breakfast", "Guest house, homestay and tents on a sharing basis", "Govind National Park permits"] + STANDARD_INCLUSIONS,
+        "exclusions": ["Travel to Dehradun", "Dehradun–Sankri transport (available as an add-on)", "Backpack offloading (available as an add-on)", "Meals during the drives"] + STANDARD_EXCLUSIONS,
     },
     {
         "slug": "everest-base-camp-trek",
@@ -518,6 +543,7 @@ TREKS = [
             {"title": "Day 11–12: Return to Lukla", "desc": "Walk back via Namche to Lukla."},
             {"title": "Day 13–14: Fly to Kathmandu and depart", "desc": "Fly back to Kathmandu; a free day for buffer, then departure."},
         ],
+        "addons": {"insurance": 650},
         "inclusions": ["Kathmandu–Lukla–Kathmandu flights", "Teahouse stays and all meals on the trek", "Sagarmatha National Park and TIMS permits", "2 nights hotel in Kathmandu"] + STANDARD_INCLUSIONS,
         "exclusions": ["International travel to Kathmandu", "Porter charges", "Hot showers and Wi-Fi in teahouses"] + STANDARD_EXCLUSIONS,
     },
@@ -555,6 +581,7 @@ TREKS = [
             {"title": "Day 7: Chandratal to Manali", "desc": "Return via Batal and Kunzum."},
             {"title": "Day 8: Departure", "desc": "Trip ends after breakfast."},
         ],
+        "addons": {"insurance": 350},
         "inclusions": ["Tempo Traveller for the circuit", "Homestays, hotels and camps on a twin/triple sharing basis", "Breakfast and dinner daily"] + STANDARD_INCLUSIONS,
         "exclusions": ["Travel to Manali", "Lunches", "Monastery donations"] + STANDARD_EXCLUSIONS,
     },
@@ -589,8 +616,10 @@ TREKS = [
             {"title": "Day 7: Buffer day", "desc": "Reserved for bad weather."},
             {"title": "Day 8–9: Return to Manali", "desc": "Drive back via Jispa to Manali."},
         ],
+        "addons": {"insurance": 450, "offload": 3000},
+        "tents": {"triple": 0, "twin": 1000, "single": 2000},
         "inclusions": ["All meals and camping", "Technical gear (harness, helmet, crampons)", "Expedition permits", "Manali to Manali transport"] + STANDARD_INCLUSIONS,
-        "exclusions": ["Personal climbing boots", "Rescue/evacuation costs"] + STANDARD_EXCLUSIONS,
+        "exclusions": ["Personal climbing boots", "Rescue/evacuation costs", "Backpack offloading (available as an add-on)"] + STANDARD_EXCLUSIONS,
     },
     # ---------------------------------------------------------------- Groups
     {
@@ -661,6 +690,9 @@ TREK_MAP = {t["slug"]: t for t in TREKS}
 def _prepare_itineraries():
     """Give every itinerary step a short `label` for the day badges.
 
+    Also builds `addon_list` and `tent_list` (name, info, price) from the
+    trek's "addons" and "tents" dicts so templates and checkout can use them.
+
     Uses `day` when set, else a "Day 3–4: ..." prefix in the title (which is
     then removed from the title), else the step number.
     """
@@ -675,6 +707,13 @@ def _prepare_itineraries():
             else:
                 step["label"] = f"Step {i}"
         trek.setdefault("itinerary_notes", [])
+        trek["addon_list"] = [
+            {**ADDONS[k], "slug": k, "price": price,
+             "info": ADDONS[k]["info"].format(start=trek["start_point"])}
+            for k, price in trek.get("addons", {}).items()
+        ]
+        trek["tent_list"] = [{**TENT_TYPES[k], "slug": k, "price": price}
+                             for k, price in trek.get("tents", {}).items()]
 
 
 _prepare_itineraries()

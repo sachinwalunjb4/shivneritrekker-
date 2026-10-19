@@ -16,6 +16,11 @@
     img.src = `https://picsum.photos/seed/${seed}/${img.getAttribute("width") || 800}/${img.getAttribute("height") || 600}`;
   }, true);
 
+  /* ------------------------------------------------ Info popovers (add-ons) */
+  if (window.bootstrap?.Popover) {
+    $$('[data-bs-toggle="popover"]').forEach((el) => new bootstrap.Popover(el));
+  }
+
   /* ------------------------------------------------ Navbar */
   const nav = $("#siteNav");
   const navMenu = $("#navMenu");

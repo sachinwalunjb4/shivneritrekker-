@@ -1,0 +1,2 @@
+run program locally
+flask --app app run --debug

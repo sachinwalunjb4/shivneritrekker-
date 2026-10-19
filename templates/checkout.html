@@ -59,6 +59,36 @@
                 <input class="form-control" id="cEmail" name="email" type="email" required autocomplete="email">
                 <div class="invalid-feedback">Please enter a valid email address.</div>
               </div>
+              {% if trek.addon_list %}
+              <fieldset class="col-12">
+                <legend class="form-label fs-6 mb-2">Add-ons <small class="text-muted">(per person, optional)</small></legend>
+                <div class="addon-options">
+                  {% for a in trek.addon_list %}
+                  <label class="addon-option">
+                    <input class="form-check-input" type="checkbox" name="addons" value="{{ a.slug }}" data-price="{{ a.price }}" data-name="{{ a.name }}">
+                    <i class="fa-solid {{ a.icon }}"></i>
+                    <span><strong>{{ a.name }}</strong><small>{{ a.info }}</small></span>
+                    <b>+{{ a.price|inr }}</b>
+                  </label>
+                  {% endfor %}
+                </div>
+              </fieldset>
+              {% endif %}
+              {% if trek.tent_list|length > 1 %}
+              <fieldset class="col-12">
+                <legend class="form-label fs-6 mb-2">Tent type <small class="text-muted">(per person)</small></legend>
+                <div class="addon-options">
+                  {% for t in trek.tent_list %}
+                  <label class="addon-option">
+                    <input class="form-check-input" type="radio" name="tent" value="{{ t.slug }}" data-price="{{ t.price }}" data-name="{{ t.name }}" {% if loop.first %}checked{% endif %}>
+                    <i class="fa-solid fa-campground"></i>
+                    <span><strong>{{ t.name }}</strong><small>{{ t.info }}</small></span>
+                    <b>{{ ('+' ~ t.price|inr) if t.price else 'Included' }}</b>
+                  </label>
+                  {% endfor %}
+                </div>
+              </fieldset>
+              {% endif %}
               <div class="col-12">
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" id="cTerms" required>
@@ -89,6 +119,7 @@
           </div>
           <dl class="summary-list">
             <div><dt>Price per person</dt><dd>{{ trek.price|inr }}</dd></div>
+            <div id="sumAddonsRow" class="d-none"><dt>Add-ons per person<small class="d-block" id="sumAddonsList"></small></dt><dd id="sumAddons"></dd></div>
             <div><dt>Participants</dt><dd id="sumPax">1</dd></div>
             <div class="total"><dt>Total payable</dt><dd id="sumTotal">{{ trek.price|inr }}</dd></div>
           </dl>

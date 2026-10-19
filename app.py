@@ -369,9 +369,26 @@ def create_order():
     if len(name) < 2 or not EMAIL_RE.match(email) or not PHONE_RE.match(phone):
         return jsonify(ok=False, message="Please enter a valid name, email and phone number."), 400
 
-    amount_paise = trek["price"] * participants * 100
+    # Add-ons and tent type: only options this trek offers, priced from data.py.
+    addon_prices = {a["slug"]: a for a in trek["addon_list"]}
+    chosen = body.get("addons") or []
+    if not isinstance(chosen, list) or any(a not in addon_prices for a in chosen):
+        return jsonify(ok=False, message="Please choose valid add-ons."), 400
+    chosen = [addon_prices[a] for a in dict.fromkeys(chosen)]
+    tent = None
+    if trek["tent_list"]:
+        tents = {t["slug"]: t for t in trek["tent_list"]}
+        tent = tents.get(body.get("tent") or trek["tent_list"][0]["slug"])
+        if not tent:
+            return jsonify(ok=False, message="Please choose a valid tent type."), 400
+
+    per_person = trek["price"] + sum(a["price"] for a in chosen) + (tent["price"] if tent else 0)
+    amount_paise = per_person * participants * 100
     notes = {"trek": trek["name"], "date": body["date"], "participants": str(participants),
-             "name": name, "email": email, "phone": phone}
+             "name": name, "email": email, "phone": phone,
+             "addons": ", ".join(a["name"] for a in chosen) or "None"}
+    if tent:
+        notes["tent"] = tent["name"]
 
     if not PAYMENTS_LIVE:
         order_id = f"order_DEMO{secrets.token_hex(6)}"

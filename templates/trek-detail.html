@@ -177,6 +177,27 @@
           </div>
           <p class="small text-muted mb-3">Taxes included · Free cancellation up to 7 days before</p>
 
+          {% set tent_upgrades = trek.tent_list|selectattr('price')|list %}
+          {% if trek.addon_list or tent_upgrades %}
+          <button class="btn btn-addons w-100 mb-2 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#addonsPanel" aria-expanded="false" aria-controls="addonsPanel">
+            <i class="fa-solid fa-circle-plus me-1"></i> View Add-ons
+          </button>
+          <div class="collapse" id="addonsPanel">
+            <ul class="addon-table">
+              {% for a in trek.addon_list + tent_upgrades %}
+              <li>
+                <span>{{ a.name }}
+                  <button type="button" class="info-btn" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top"
+                          data-bs-content="{{ a.info }}" aria-label="About {{ a.name }}"><i class="fa-solid fa-circle-info"></i></button>
+                </span>
+                <strong>{{ a.price|inr }}</strong>
+              </li>
+              {% endfor %}
+            </ul>
+            <p class="small text-muted mb-3">Per person. Choose your add-ons at checkout.</p>
+          </div>
+          {% endif %}
+
           <h3 class="h6 fw-semibold mb-2"><i class="fa-regular fa-calendar-days text-accent"></i> Upcoming dates</h3>
           {% if dates %}
           <div class="date-list" role="radiogroup" aria-label="Choose a departure date">
