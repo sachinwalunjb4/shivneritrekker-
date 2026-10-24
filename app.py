@@ -202,6 +202,7 @@ def index():
         category_counts=category_counts,
         testimonials=data.TESTIMONIALS,
         trek_count=len(data.TREKS),
+        treks=data.TREKS,
     )
 
 
@@ -296,6 +297,55 @@ def contact():
     if not send_admin_email(subject, body, reply_to=fields["email"]):
         return respond(False, "We couldn't send your message right now. Please call or WhatsApp us.", 502)
     return respond(True, "Thanks! Your message has been sent. Our team will contact you within 24 hours.")
+
+
+@app.route("/inquiry", methods=["POST"])
+def inquiry():
+    """Quick enquiry from the home-page popup (AJAX only)."""
+    form = request.form
+    fields = {
+        "name": clean(form.get("name"), 100),
+        "email": clean(form.get("email"), 150),
+        "phone": clean(form.get("phone"), 20),
+        "city": clean(form.get("city"), 80),
+        "trek": clean(form.get("trek"), 150),
+    }
+
+    # Honeypot: real users never fill this hidden field.
+    if form.get("website"):
+        return jsonify(ok=True, message="Thanks! We'll get back to you shortly.", errors={})
+
+    errors = {}
+    if len(fields["name"]) < 2:
+        errors["name"] = "Please enter your name."
+    if not EMAIL_RE.match(fields["email"]):
+        errors["email"] = "Please enter a valid email address."
+    if not PHONE_RE.match(fields["phone"]):
+        errors["phone"] = "Please enter a valid mobile number."
+    if len(fields["city"]) < 2:
+        errors["city"] = "Please enter your city."
+    if not fields["trek"]:
+        errors["trek"] = "Please choose a trek."
+    if errors:
+        return jsonify(ok=False, message="Please correct the highlighted fields.", errors=errors), 400
+
+    if rate_limited(f"inquiry:{request.remote_addr}"):
+        return jsonify(ok=False, message="Too many requests. Please try again in a few minutes.", errors={}), 429
+
+    body = (
+        "New quick enquiry from the home-page popup\n"
+        "------------------------------------------\n"
+        f"Name:    {fields['name']}\n"
+        f"Email:   {fields['email']}\n"
+        f"Mobile:  {fields['phone']}\n"
+        f"City:    {fields['city']}\n"
+        f"Trek:    {fields['trek']}\n"
+    )
+    subject = f"Quick enquiry: {fields['trek']} – {fields['name']} ({fields['city']})"
+    if not send_admin_email(subject, body, reply_to=fields["email"]):
+        return jsonify(ok=False, message="We couldn't send your details right now. Please call or WhatsApp us.",
+                       errors={}), 502
+    return jsonify(ok=True, message="Thanks! Our team will contact you within 24 hours.", errors={})
 
 
 @app.route("/checkout/<slug>")

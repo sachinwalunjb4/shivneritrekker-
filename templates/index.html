@@ -221,4 +221,70 @@
     </div>
   </div>
 </section>
+
+{# ---------------- First-visit enquiry popup (shown once per browser by main.js) ---------------- #}
+<div class="modal fade inquiry-modal" id="inquiryModal" tabindex="-1" aria-labelledby="inquiryTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <div>
+          <span class="eyebrow-dark">Plan your next adventure</span>
+          <h2 class="modal-title h4" id="inquiryTitle">Which trek interests you?</h2>
+          <p class="text-muted small mb-0">Share your details and our trek leader will call you back with dates and prices.</p>
+        </div>
+        <button type="button" class="btn-close align-self-start" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="inquiryAlert" class="d-none" role="status" aria-live="polite"></div>
+        <form id="inquiryForm" method="post" action="{{ url_for('inquiry') }}" novalidate>
+          <div class="hp-field" aria-hidden="true">
+            <label for="inqWebsite">Website</label>
+            <input type="text" id="inqWebsite" name="website" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label" for="inqName">Full name *</label>
+              <input class="form-control" id="inqName" name="name" required minlength="2" maxlength="100" autocomplete="name">
+              <div class="invalid-feedback">Please enter your name.</div>
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="inqEmail">Email *</label>
+              <input class="form-control" id="inqEmail" name="email" type="email" required maxlength="150" autocomplete="email">
+              <div class="invalid-feedback">Please enter a valid email.</div>
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="inqPhone">Mobile number *</label>
+              <input class="form-control" id="inqPhone" name="phone" type="tel" required pattern="\+?[\d\s\-\(\)]{7,20}" maxlength="20" autocomplete="tel">
+              <div class="invalid-feedback">Please enter a valid mobile number.</div>
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="inqCity">City *</label>
+              <input class="form-control" id="inqCity" name="city" required minlength="2" maxlength="80" autocomplete="address-level2">
+              <div class="invalid-feedback">Please enter your city.</div>
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="inqTrek">Trek of interest *</label>
+              <select class="form-select" id="inqTrek" name="trek" required>
+                <option value="">Select a trek</option>
+                {% for c in categories %}
+                <optgroup label="{{ c.name }}">
+                  {% for t in treks if t.category == c.slug %}<option>{{ t.name }}</option>{% endfor %}
+                </optgroup>
+                {% endfor %}
+                <option>Not sure yet – suggest one</option>
+              </select>
+              <div class="invalid-feedback">Please choose a trek.</div>
+            </div>
+            <div class="col-12 d-grid">
+              <button class="btn btn-accent btn-lg" type="submit" id="inquirySubmit">
+                <span class="btn-label"><i class="fa-solid fa-paper-plane me-1"></i> Get a Call Back</span>
+                <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

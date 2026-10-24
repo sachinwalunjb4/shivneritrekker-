@@ -332,4 +332,63 @@
       }
     });
   }
+
+  /* ------------------------------------------------ Home: first-visit enquiry popup */
+  const inquiryModalEl = $("#inquiryModal");
+  if (inquiryModalEl && window.bootstrap?.Modal) {
+    const SEEN_KEY = "inquiryPopupSeen";
+    const seen = () => { try { return localStorage.getItem(SEEN_KEY); } catch (_) { return "1"; } };
+    const markSeen = () => { try { localStorage.setItem(SEEN_KEY, "1"); } catch (_) { /* storage unavailable */ } };
+
+    if (!seen()) {
+      const modal = new bootstrap.Modal(inquiryModalEl);
+      inquiryModalEl.addEventListener("hidden.bs.modal", markSeen);
+      setTimeout(() => { if (!document.querySelector(".modal.show, .lightbox.open")) modal.show(); }, 2500);
+
+      const form = $("#inquiryForm");
+      const alertBox = $("#inquiryAlert");
+      const submit = $("#inquirySubmit");
+      const showAlert = (type, msg) => {
+        alertBox.className = `alert alert-${type}`;
+        alertBox.textContent = msg;
+      };
+      const setLoading = (on) => {
+        submit.disabled = on;
+        $(".spinner-border", submit).classList.toggle("d-none", !on);
+      };
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        $$(".is-invalid", form).forEach((el) => el.classList.remove("is-invalid"));
+        if (!form.checkValidity()) {
+          $$(":invalid", form).forEach((el) => el.classList.add("is-invalid"));
+          $(":invalid", form)?.focus();
+          return;
+        }
+        setLoading(true);
+        try {
+          const res = await fetch(form.action, {
+            method: "POST",
+            headers: { "X-Requested-With": "fetch", Accept: "application/json" },
+            body: new FormData(form),
+          });
+          const data = await res.json();
+          if (data.ok) {
+            markSeen();
+            showAlert("success", data.message);
+            form.classList.add("d-none");
+            window.gtag?.("event", "generate_lead", { form: "home_popup" });
+            setTimeout(() => modal.hide(), 3000);
+          } else {
+            showAlert("danger", data.message);
+            Object.keys(data.errors || {}).forEach((name) => form.elements[name]?.classList.add("is-invalid"));
+          }
+        } catch (err) {
+          showAlert("danger", "Network error. Please try again, or contact us on WhatsApp.");
+        } finally {
+          setLoading(false);
+        }
+      });
+    }
+  }
 })();
