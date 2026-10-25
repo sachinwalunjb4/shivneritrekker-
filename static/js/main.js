@@ -333,18 +333,20 @@
     });
   }
 
-  /* ------------------------------------------------ Home: first-visit enquiry popup */
+  /* ------------------------------------------------ Enquiry popup (home: auto-open once; trek pages: via button) */
   const inquiryModalEl = $("#inquiryModal");
   if (inquiryModalEl && window.bootstrap?.Modal) {
     const SEEN_KEY = "inquiryPopupSeen";
     const seen = () => { try { return localStorage.getItem(SEEN_KEY); } catch (_) { return "1"; } };
     const markSeen = () => { try { localStorage.setItem(SEEN_KEY, "1"); } catch (_) { /* storage unavailable */ } };
+    const modal = bootstrap.Modal.getOrCreateInstance(inquiryModalEl);
 
-    if (!seen()) {
-      const modal = new bootstrap.Modal(inquiryModalEl);
-      inquiryModalEl.addEventListener("hidden.bs.modal", markSeen);
+    if (inquiryModalEl.hasAttribute("data-auto-show") && !seen()) {
+      inquiryModalEl.addEventListener("hidden.bs.modal", markSeen, { once: true });
       setTimeout(() => { if (!document.querySelector(".modal.show, .lightbox.open")) modal.show(); }, 2500);
+    }
 
+    {
       const form = $("#inquiryForm");
       const alertBox = $("#inquiryAlert");
       const submit = $("#inquirySubmit");
@@ -356,6 +358,14 @@
         submit.disabled = on;
         $(".spinner-border", submit).classList.toggle("d-none", !on);
       };
+
+      // Reopening after a successful send shows a fresh form (trek preselection is kept by reset()).
+      inquiryModalEl.addEventListener("show.bs.modal", () => {
+        if (!form.classList.contains("d-none")) return;
+        form.reset();
+        form.classList.remove("d-none");
+        alertBox.className = "d-none";
+      });
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();

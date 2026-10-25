@@ -42,11 +42,14 @@ log = logging.getLogger("rock-ridge-expeditions")
 SITE = {
     "name": os.getenv("SITE_NAME", "Rock & Ridge Expeditions"),
     "tagline": "Treks & Expeditions",
-    "contact_person": os.getenv("CONTACT_PERSON", "Santosh Dukare"),
-    "phone": os.getenv("CONTACT_PHONE", "+91 98811 43180"),
-    "email": os.getenv("CONTACT_EMAIL", "hello@rockandridgeexpeditions.example"),
+    "contact_person": os.getenv("CONTACT_PERSON", "Rock & Ridge  Desk support"),
+    "phone": os.getenv("CONTACT_PHONE", "+91 98811 43180/ +91 93091 87676"),
+    "email": os.getenv("CONTACT_EMAIL", "dhyassahyadri@gmail.com"),
     "address": os.getenv("CONTACT_ADDRESS", "Narayangaon, Junnar, Pune, Maharashtra 410504"),
-    "hours": "Mon–Sat, 10:00 AM – 7:00 PM",
+    "hours": [
+        "Monday - Saturday: 10 AM to 10 PM (GMT +5:30)",
+        "Sunday: 10 AM to 06 PM (GMT +5:30)",
+    ],
     "whatsapp": re.sub(r"\D", "", os.getenv("WHATSAPP_NUMBER", "919881143180")),
     "instagram": "https://instagram.com/",
     "facebook": "https://facebook.com/",
@@ -234,6 +237,7 @@ def trek_detail(slug):
         trek=trek,
         dates=data.upcoming_dates(trek),
         related=related,
+        treks=data.TREKS,
         wa_text=f"Hi! I'm interested in the {trek['name']} ({trek['duration']}). Please share details.",
     )
 

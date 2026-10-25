@@ -220,7 +220,9 @@
             <a class="btn btn-whatsapp btn-lg" href="{{ whatsapp_link(wa_text) }}" target="_blank" rel="noopener">
               <i class="fa-brands fa-whatsapp me-1"></i> Chat on WhatsApp
             </a>
-            <a class="btn btn-link text-dark" href="{{ url_for('contact', trek=trek.name) }}">Send an enquiry</a>
+            <button class="btn btn-outline-dark btn-lg" type="button" data-bs-toggle="modal" data-bs-target="#inquiryModal">
+              <i class="fa-solid fa-paper-plane me-1"></i> Send an Enquiry
+            </button>
           </div>
           <hr>
           <ul class="list-unstyled small mb-0 trust-list">
@@ -250,7 +252,10 @@
   <div><small class="text-muted d-block lh-1">From</small><strong>{{ trek.price|inr }}</strong></div>
   <div class="d-flex gap-2">
     <a class="btn btn-whatsapp" href="{{ whatsapp_link(wa_text) }}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+    <button class="btn btn-outline-dark" type="button" data-bs-toggle="modal" data-bs-target="#inquiryModal">Enquire</button>
     <a class="btn btn-accent" href="#book">Book Now</a>
   </div>
 </div>
+
+{% with inquiry_trek=trek.name %}{% include "partials/_inquiry_modal.html" %}{% endwith %}
 {% endblock %}
