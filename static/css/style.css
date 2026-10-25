@@ -423,3 +423,46 @@ body:has(.nav-solid) main { padding-top: var(--nav-h); }
 .inquiry-modal .modal-content { border: 0; border-radius: 18px; border-top: 5px solid var(--accent); box-shadow: 0 24px 60px rgba(0, 0, 0, .25); }
 .inquiry-modal .modal-header { padding: 1.5rem 1.5rem 0; gap: 1rem; }
 .inquiry-modal .modal-body { padding: 1.25rem 1.5rem 1.5rem; }
+
+/* Trek page: sticky section tabs */
+:root { --tabs-h: 66px; }
+html:has(.trek-tabs) { scroll-padding-top: calc(var(--nav-h) + var(--tabs-h) + 12px); }
+.trek-tabs { position: sticky; top: var(--nav-h); z-index: 1020; background: linear-gradient(90deg, #e53935 0%, #ef5350 55%, #ff8a80 100%); box-shadow: 0 6px 18px rgba(229, 57, 53, .25); }
+.trek-tabs__list { list-style: none; margin: 0; padding: 14px 0; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.trek-tabs__list::-webkit-scrollbar { display: none; }
+.trek-tabs__link { display: block; white-space: nowrap; color: #fff; text-decoration: none; font-family: var(--font-head); font-weight: 500; font-size: .9rem;
+  padding: .35rem .75rem; border: 1.5px solid rgba(255, 255, 255, .9); border-radius: 8px; transition: background-color .2s, color .2s; }
+.trek-tabs__link:hover, .trek-tabs__link:focus-visible { background: rgba(255, 255, 255, .18); color: #fff; }
+.trek-tabs__link.active { background: #fff; color: #e53935; }
+.trek-tabs ~ .section .booking-card { top: calc(var(--nav-h) + var(--tabs-h) + 20px); }
+@media (max-width: 575.98px) { :root { --tabs-h: 58px; } .trek-tabs__list { padding: 10px 0; gap: 10px; } .trek-tabs__link { font-size: .88rem; } }
+
+/* Trek page: sections */
+.trek-section { padding-top: 8px; margin-bottom: 48px; }
+.trek-section:last-child { margin-bottom: 0; }
+.check-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.check-list li { display: flex; gap: 10px; }
+.check-list i { color: var(--forest); margin-top: 4px; }
+.trek-video { border-radius: var(--radius); overflow: hidden; background: #000; cursor: pointer; }
+.reach-list { display: grid; gap: 12px; }
+.reach-item { display: flex; gap: 14px; background: var(--soft); border-radius: 12px; padding: 16px 18px; }
+.reach-item > i { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; background: #fff; color: var(--accent); }
+.terms-box { border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; }
+.terms-box ul { padding-left: 1.1rem; } .terms-box li { margin-bottom: 6px; }
+.btn-readmore { color: #e53935; border: 1.5px solid #e53935; border-radius: 8px; padding: .45rem 1.2rem; font-weight: 600; }
+.btn-readmore:hover, .btn-readmore:focus-visible { background: #e53935; color: #fff; }
+.btn-readmore .fa-chevron-down { transition: transform .2s; font-size: .8rem; }
+.btn-readmore:not(.collapsed) .fa-chevron-down { transform: rotate(180deg); }
+.btn-readmore.collapsed .when-open, .btn-readmore:not(.collapsed) .when-closed { display: none; }
+.policy-table { border: 1px solid var(--line); }
+.policy-table thead th { background: var(--soft); font-family: var(--font-head); font-weight: 600; }
+.policy-table td:last-child { font-weight: 600; }
+.essentials-box { background: var(--soft); border-radius: 12px; padding: 18px 20px; height: 100%; }
+.essentials-box h3 i { color: var(--accent); margin-right: 4px; }
+.essentials-box ul { padding-left: 1.1rem; margin: 0; font-size: .95rem; } .essentials-box li { margin-bottom: 4px; }
+.link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.link-grid a { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 12px; color: var(--ink); text-decoration: none; font-weight: 500; transition: border-color .2s, color .2s; }
+.link-grid a i { color: var(--accent); width: 18px; text-align: center; }
+.link-grid a:hover { border-color: var(--accent); color: var(--accent); }
+.faq-accordion { --bs-accordion-active-bg: var(--soft); --bs-accordion-active-color: var(--ink); --bs-accordion-btn-focus-box-shadow: 0 0 0 .2rem rgba(229, 57, 53, .2); --bs-accordion-border-radius: 12px; }
+.faq-accordion .accordion-button { font-family: var(--font-head); font-weight: 500; }

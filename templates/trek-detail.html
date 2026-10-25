@@ -44,12 +44,31 @@
   </div>
 </section>
 
-<section class="section pt-5">
+{# ------------------------------------------------------------------ Sticky section tabs #}
+{% set trek_tabs = [
+  ('overview', 'Overview'), ('about', 'About Trek'), ('itinerary', 'Itinerary'), ('eligibility', 'Eligibility'),
+  ('video', 'Video'), ('how-to-reach', 'How to Reach'), ('cost-terms', 'Cost Terms'),
+  ('cancellation', 'Cancellation Policy'), ('essentials', 'Trek Essentials'), ('links', 'Imp. Links'), ('faqs', 'FAQs'),
+] %}
+<nav class="trek-tabs" id="trekTabs" aria-label="Trek sections">
   <div class="container">
-    <div class="row g-5">
+    <ul class="trek-tabs__list">
+      {% for id, label in trek_tabs %}
+      <li><a class="trek-tabs__link {% if loop.first %}active{% endif %}" href="#{{ id }}">{{ label }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</nav>
+
+<section class="section pt-4">
+  <div class="container">
+    <div class="row g-4 g-lg-5">
       {# -------------------------------------------------------------- Main column #}
       <div class="col-lg-8">
-        <div class="facts-grid mb-5">
+        <div class="trek-section" id="overview">
+        <h2 class="h3 mb-3">Overview</h2>
+        <p class="lead-sm">{{ trek.summary }}</p>
+        <div class="facts-grid mb-4">
           <div class="fact"><i class="fa-regular fa-clock"></i><span>Duration</span><strong>{{ trek.duration }}</strong></div>
           <div class="fact"><i class="fa-solid fa-signal"></i><span>Difficulty</span><strong>{{ difficulty_meter(trek.difficulty, levels) }}</strong></div>
           <div class="fact"><i class="fa-solid fa-mountain"></i><span>Max altitude</span><strong>{{ trek.altitude }}</strong></div>
@@ -58,11 +77,17 @@
           <div class="fact"><i class="fa-solid fa-indian-rupee-sign"></i><span>Price</span><strong>{{ trek.price|inr }} <small class="text-muted fw-normal">/ person</small></strong></div>
         </div>
 
-        <h2 class="h3 mb-3">Overview</h2>
-        <p class="lead-sm">{{ trek.overview }}</p>
+        <h3 class="h5 mb-3">Highlights</h3>
         <ul class="highlights">
           {% for h in trek.highlights %}<li><i class="fa-solid fa-circle-check"></i> {{ h }}</li>{% endfor %}
         </ul>
+        </div>
+
+        <div class="trek-section" id="about">
+          <h2 class="h3 mb-3">About {{ trek.name }}</h2>
+          <p class="lead-sm">{{ trek.overview }}</p>
+          {% for p in trek.about %}<p class="lead-sm">{{ p }}</p>{% endfor %}
+        </div>
 
         {% macro step_facts(step) %}
           {% if step.altitude or step.drive or step.trek or step.stay %}
@@ -82,7 +107,7 @@
           {% endif %}
         {% endmacro %}
 
-        <div class="itinerary-box mt-5" id="itinerary">
+        <div class="itinerary-box trek-section" id="itinerary">
           <h2 class="h3 mb-3">{{ trek.name }} Itinerary</h2>
           <ul class="nav itin-tabs mb-4" role="tablist">
             <li class="nav-item" role="presentation">
@@ -144,28 +169,149 @@
           </div>
         </div>
 
-        <div class="row g-4 mt-4">
-          <div class="col-md-6">
-            <div class="incl-box incl">
-              <h2 class="h5"><i class="fa-solid fa-circle-check"></i> Inclusions</h2>
-              <ul>{% for i in trek.inclusions %}<li>{{ i }}</li>{% endfor %}</ul>
-            </div>
+        <div class="trek-section" id="eligibility">
+          <h2 class="h3 mb-3">Eligibility</h2>
+          <p class="text-muted mb-3">This trek is rated <strong class="text-dark">{{ trek.difficulty }}</strong>. You can join if:</p>
+          <ul class="check-list">
+            {% for e in trek.eligibility %}<li><i class="fa-solid fa-user-check"></i> {{ e }}</li>{% endfor %}
+          </ul>
+        </div>
+
+        <div class="trek-section" id="video">
+          <h2 class="h3 mb-3">Video</h2>
+          <div class="ratio ratio-16x9 yt-lite trek-video" data-youtube-id="{{ trek.youtube_id }}" data-title="{{ trek.name }} video">
+            <img src="{{ img(trek.images[0], 1200) }}" alt="" loading="lazy">
+            <button type="button" class="yt-play" aria-label="Play video: {{ trek.name }}"><i class="fa-solid fa-play"></i></button>
           </div>
-          <div class="col-md-6">
-            <div class="incl-box excl">
-              <h2 class="h5"><i class="fa-solid fa-circle-xmark"></i> Exclusions</h2>
-              <ul>{% for i in trek.exclusions %}<li>{{ i }}</li>{% endfor %}</ul>
+          <h3 class="h5 mt-4 mb-3">Photos</h3>
+          <div class="thumb-grid">
+            {% for src in trek.images %}
+            <a href="{{ img(src, 1600) }}" class="lightbox-item" data-lightbox="trek" data-caption="{{ trek.name }} – photo {{ loop.index }}">
+              <img src="{{ img(src, 500) }}" alt="{{ trek.name }} photo {{ loop.index }}" loading="lazy" width="500" height="375">
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="trek-section" id="how-to-reach">
+          <h2 class="h3 mb-3">How to Reach</h2>
+          <div class="reach-list">
+            {% for r in trek.how_to_reach %}
+            <div class="reach-item">
+              <i class="fa-solid {{ r.icon }}"></i>
+              <div><h3 class="h6 mb-1">{{ r.title }}</h3><p class="mb-0">{{ r.text }}</p></div>
+            </div>
+            {% endfor %}
+            {% for a in trek.addon_list if a.slug == 'transport' %}
+            <div class="reach-item">
+              <i class="fa-solid {{ a.icon }}"></i>
+              <div><h3 class="h6 mb-1">Transport add-on</h3><p class="mb-0">{{ a.info }} Add it at checkout for {{ a.price|inr }} per person.</p></div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="trek-section" id="cost-terms">
+          <h2 class="h3 mb-3">Cost Terms</h2>
+          <div class="terms-box">
+            <p class="mb-2"><strong>Trek fee: {{ trek.price|inr }} per person</strong> <span class="text-muted">(taxes included)</span></p>
+            <p class="mb-2">{{ cost_terms.intro }}</p>
+            <p class="fw-semibold mb-3">Terms and Conditions:</p>
+            <div class="collapse" id="costTermsMore">
+              <ul class="mb-3">{% for t in cost_terms.terms %}<li>{{ t }}</li>{% endfor %}</ul>
+            </div>
+            <button class="btn btn-readmore collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#costTermsMore"
+                    aria-expanded="false" aria-controls="costTermsMore">
+              <span class="when-closed">Read more</span><span class="when-open">Read less</span>
+              <i class="fa-solid fa-chevron-down ms-2"></i>
+            </button>
+          </div>
+          <div class="row g-4 mt-1">
+            <div class="col-md-6">
+              <div class="incl-box incl">
+                <h3 class="h5"><i class="fa-solid fa-circle-check"></i> Inclusions</h3>
+                <ul>{% for i in trek.inclusions %}<li>{{ i }}</li>{% endfor %}</ul>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="incl-box excl">
+                <h3 class="h5"><i class="fa-solid fa-circle-xmark"></i> Exclusions</h3>
+                <ul>{% for i in trek.exclusions %}<li>{{ i }}</li>{% endfor %}</ul>
+              </div>
             </div>
           </div>
         </div>
 
-        <h2 class="h3 mt-5 mb-3">Trek gallery</h2>
-        <div class="thumb-grid">
-          {% for src in trek.images %}
-          <a href="{{ img(src, 1600) }}" class="lightbox-item" data-lightbox="trek" data-caption="{{ trek.name }} – photo {{ loop.index }}">
-            <img src="{{ img(src, 500) }}" alt="{{ trek.name }} photo {{ loop.index }}" loading="lazy" width="500" height="375">
-          </a>
-          {% endfor %}
+        <div class="trek-section" id="cancellation">
+          <h2 class="h3 mb-3">Cancellation Policy</h2>
+          <div class="table-responsive">
+            <table class="table policy-table mb-3">
+              <thead><tr><th scope="col">When you cancel</th><th scope="col">What you get back</th></tr></thead>
+              <tbody>
+                {% for when, refund in cancellation.rows %}<tr><td>{{ when }}</td><td>{{ refund }}</td></tr>{% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <ul class="small text-muted mb-0">{% for n in cancellation.notes %}<li>{{ n }}</li>{% endfor %}</ul>
+        </div>
+
+        <div class="trek-section" id="essentials">
+          <h2 class="h3 mb-3">Trek Essentials</h2>
+          <div class="row g-3">
+            {% for g in trek.essentials %}
+            <div class="col-md-4">
+              <div class="essentials-box">
+                <h3 class="h6"><i class="fa-solid {{ g.icon }}"></i> {{ g.title }}</h3>
+                <ul>{% for i in g['items'] %}<li>{{ i }}</li>{% endfor %}</ul>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="trek-section" id="links">
+          <h2 class="h3 mb-3">Important Links</h2>
+          <div class="link-grid">
+            <a href="{{ url_for('checkout', slug=trek.slug) }}"><i class="fa-solid fa-ticket"></i> Book this trek</a>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#inquiryModal"><i class="fa-solid fa-paper-plane"></i> Send an enquiry</a>
+            <a href="{{ whatsapp_link(wa_text) }}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp</a>
+            <a href="{{ url_for('tours', category=trek.category) }}"><i class="fa-solid fa-mountain-sun"></i> All {{ category_map[trek.category].name }}</a>
+            <a href="{{ url_for('gallery') }}"><i class="fa-solid fa-images"></i> Photo gallery</a>
+            <a href="{{ url_for('contact') }}"><i class="fa-solid fa-headset"></i> Contact us</a>
+            {% for l in trek.links %}
+            <a href="{{ l.url }}" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> {{ l.label }}</a>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% set offload = trek.addon_list|selectattr('slug', 'equalto', 'offload')|first %}
+        {% set faqs = trek.faqs + [
+          ('How difficult is the ' ~ trek.name ~ '?',
+           'It is rated ' ~ trek.difficulty ~ ' and reaches a maximum altitude of ' ~ trek.altitude ~ '. See the Eligibility section for the fitness level we expect.'),
+          ('What is the best time to do this trek?', 'The best months are ' ~ (trek.season_months|months) ~ '.'),
+          ('Where does the trek start?', 'The trek starts from ' ~ trek.start_point ~ '. We share the exact meeting time and location on WhatsApp before the trek.'),
+          ('Can I join alone?', 'Yes. Many trekkers join solo and our leaders make sure everyone feels part of the group. Women trekkers share tents and rooms with other women.'),
+          ('Can I offload my backpack?',
+           ('Yes. You can add backpack offloading at checkout for ' ~ (offload.price|inr) ~ ' per person.') if offload
+           else 'Offloading is not needed or not available on this trek. Please carry only what is in the Trek Essentials list.'),
+          ('What happens if the trek is cancelled due to weather?', 'Your safety comes first. If we cancel because of weather or government orders, you get a 100% trek voucher valid for 1 year.'),
+          ('How do I get my booking confirmation?', 'Pay securely online with Razorpay. You get a confirmation by email, and a trek coordinator contacts you on WhatsApp within 24 hours.'),
+        ] %}
+        <div class="trek-section" id="faqs">
+          <h2 class="h3 mb-3">FAQs</h2>
+          <div class="accordion faq-accordion" id="faqAccordion">
+            {% for q, a in faqs %}
+            <div class="accordion-item">
+              <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ loop.index }}"
+                        aria-expanded="false" aria-controls="faq{{ loop.index }}">{{ q }}</button>
+              </h3>
+              <div id="faq{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">{{ a }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
         </div>
       </div>
 

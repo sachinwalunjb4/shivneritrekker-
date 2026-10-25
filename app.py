@@ -238,6 +238,8 @@ def trek_detail(slug):
         dates=data.upcoming_dates(trek),
         related=related,
         treks=data.TREKS,
+        cost_terms=data.COST_TERMS,
+        cancellation=data.CANCELLATION_POLICY,
         wa_text=f"Hi! I'm interested in the {trek['name']} ({trek['duration']}). Please share details.",
     )
 

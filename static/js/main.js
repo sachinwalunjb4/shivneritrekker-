@@ -196,7 +196,7 @@
       const id = wrap.dataset.youtubeId || "";
       if (!/^[\w-]{11}$/.test(id)) {
         wrap.innerHTML = `<div class="d-flex align-items-center justify-content-center text-white p-3 text-center small">
-          Add a real YouTube video ID for this video in data.py (VIDEOS).</div>`;
+          Video coming soon. (Add a YouTube video ID in data.py.)</div>`;
         return;
       }
       const iframe = document.createElement("iframe");
@@ -284,6 +284,36 @@
     $$('input[name="date"]').forEach((r) => r.addEventListener("change", sync));
     sync();
     bookBtn.addEventListener("click", () => window.gtag?.("event", "begin_checkout", { item_name: document.title }));
+  }
+
+  /* ------------------------------------------------ Trek detail: highlight the section tab in view */
+  const trekTabs = $("#trekTabs");
+  if (trekTabs) {
+    const links = $$(".trek-tabs__link", trekTabs);
+    const sections = links.map((a) => $(a.getAttribute("href"))).filter(Boolean);
+    let current = null;
+    const setActive = (link) => {
+      if (link === current) return;
+      current = link;
+      links.forEach((a) => a.classList.toggle("active", a === link));
+      // Keep the active pill visible inside the horizontally scrolling bar.
+      const list = link.parentElement.parentElement;
+      const left = link.offsetLeft - (list.clientWidth - link.offsetWidth) / 2;
+      list.scrollTo({ left, behavior: reduceMotion ? "auto" : "smooth" });
+    };
+    const spy = () => {
+      const line = trekTabs.getBoundingClientRect().bottom + 24;
+      let active = sections[0];
+      sections.forEach((s) => { if (s.getBoundingClientRect().top <= line) active = s; });
+      setActive(links[sections.indexOf(active)]);
+    };
+    let spyTicking = false;
+    window.addEventListener("scroll", () => {
+      if (spyTicking) return;
+      spyTicking = true;
+      requestAnimationFrame(() => { spy(); spyTicking = false; });
+    }, { passive: true });
+    spy();
   }
 
   /* ------------------------------------------------ Contact form (AJAX with graceful fallback) */

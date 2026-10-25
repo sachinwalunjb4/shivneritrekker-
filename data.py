@@ -80,6 +80,111 @@ TENT_TYPES = {
     "single": {"name": "Single Occupancy Tent", "info": "A tent to yourself for the whole trek."},
 }
 
+# --------------------------------------------------------------------------- trek page sections
+# Shared content for the trek detail page tabs. Every trek gets these by default
+# (see _prepare_sections below); add the same key to a trek to override it, e.g.
+# "eligibility": [...], "how_to_reach": [...], "essentials": [...].
+# Extra per-trek keys: "about" (more paragraphs), "youtube_id" (trek video),
+# "links" ([{"label", "url"}] extra important links), "faqs" ([("Question?", "Answer.")],
+# shown before the standard FAQs).
+
+ELIGIBILITY = {
+    "Easy": [
+        "Age 8 years and above (under 16 must trek with a parent or guardian).",
+        "Able to walk 8–10 km on uneven trails with short climbs.",
+        "No previous trekking experience needed – ideal for first-timers.",
+    ],
+    "Moderate": [
+        "Age 12 years and above (under 18 must trek with a parent or guardian).",
+        "Able to jog 5 km in 40 minutes, or walk 10 km comfortably.",
+        "Previous trekking experience is helpful but not required.",
+    ],
+    "Difficult": [
+        "Age 15 years and above (under 18 must trek with a parent or guardian).",
+        "Able to jog 5 km in 35 minutes and climb stairs for 20 minutes without a break.",
+        "At least one easy or moderate multi-day trek completed earlier.",
+    ],
+    "Challenging": [
+        "Age 18 years and above.",
+        "Able to jog 5 km in 30 minutes and walk 6–8 hours a day with a 10 kg backpack.",
+        "At least one high-altitude trek above 4,000 m completed earlier.",
+        "A medical fitness certificate signed by a doctor is mandatory.",
+    ],
+}
+ELIGIBILITY_COMMON = [
+    "Please tell us about any medical condition (asthma, BP, diabetes, heart issues) before booking.",
+    "Alcohol, smoking and loud music are not allowed on the trek.",
+]
+
+HOW_TO_REACH = {
+    "local": [
+        {"icon": "fa-location-dot", "title": "Meeting point",
+         "text": "{start}. The exact meeting time and location pin are shared on WhatsApp 2 days before the trek."},
+        {"icon": "fa-train", "title": "By train / bus",
+         "text": "Regular local trains and state transport buses run from Mumbai and Pune. Our team will suggest the best option for your batch."},
+        {"icon": "fa-car", "title": "By car / bike",
+         "text": "You can drive to the meeting point; parking is available near the base village at a small fee."},
+    ],
+    "mountain": [
+        {"icon": "fa-location-dot", "title": "Base / meeting point",
+         "text": "{start}. Reporting time and the hotel or pick-up location are shared on WhatsApp a week before the trek."},
+        {"icon": "fa-plane", "title": "By air",
+         "text": "Fly to the nearest airport and take a taxi or bus to {start}. Book flights that land at least a day before the trek starts."},
+        {"icon": "fa-train", "title": "By train / bus",
+         "text": "Take an overnight train or bus to {start}. Arrive a day early to rest and acclimatise."},
+    ],
+}
+
+COST_TERMS = {
+    "intro": "Pay a one-time fee to select your favourite trek, and you can repeat it as many times as you want within 5 years.",
+    "terms": [
+        "The repeat offer is valid for 5 years from the date of your first trek with us.",
+        "It applies to the same trek only, subject to seat availability. Book your repeat slot at least 15 days in advance.",
+        "Only the trek fee is waived. Add-ons (transport, offloading, insurance, tent upgrades) and any increase in government or forest fees are payable each time.",
+        "The offer is personal and cannot be transferred to another person.",
+        "Rock & Ridge Expeditions may change the batch or date for operational or safety reasons.",
+    ],
+}
+
+CANCELLATION_POLICY = {
+    "rows": [
+        ("7 days or more before the trek", "100% refund"),
+        ("3 to 6 days before the trek", "50% refund, or a 100% trek voucher valid for 1 year"),
+        ("Less than 3 days before the trek / no-show", "No refund, but a 50% trek voucher valid for 1 year"),
+    ],
+    "notes": [
+        "If we cancel a trek because of bad weather, natural calamities or government orders, you get a 100% trek voucher valid for 1 year.",
+        "Refunds are processed within 7–10 working days to the original payment method.",
+        "Add-on charges follow the same cancellation slabs as the trek fee.",
+        "To cancel, email or WhatsApp us with your booking ID.",
+    ],
+}
+
+ESSENTIALS = {
+    "local": [
+        {"title": "Must carry", "icon": "fa-person-hiking", "items": [
+            "20–30 L backpack", "2 litres of water", "Trekking shoes with good grip",
+            "Raincoat or poncho (monsoon)", "Torch or headlamp (night treks)", "Government photo ID"]},
+        {"title": "Clothing", "icon": "fa-shirt", "items": [
+            "Quick-dry T-shirt and track pants", "One pair of spare clothes", "Cap and sunglasses",
+            "Light jacket or windcheater (winter)"]},
+        {"title": "Personal", "icon": "fa-kit-medical", "items": [
+            "Energy snacks (dry fruits, chikki, biscuits)", "Sunscreen", "Personal medicines",
+            "Plastic bag for wet clothes and waste"]},
+    ],
+    "mountain": [
+        {"title": "Gear", "icon": "fa-person-hiking", "items": [
+            "50–60 L backpack with rain cover", "Daypack (20 L) for summit day", "Trekking shoes with ankle support",
+            "Trekking pole", "UV-protection sunglasses", "Headlamp with spare batteries"]},
+        {"title": "Clothing", "icon": "fa-shirt", "items": [
+            "Down or padded jacket", "Fleece jacket", "2 sets of thermals", "2–3 quick-dry T-shirts",
+            "2 trekking pants", "Woollen cap, neck gaiter and gloves (inner + waterproof)", "4 pairs of socks (including woollen)"]},
+        {"title": "Personal", "icon": "fa-kit-medical", "items": [
+            "2 one-litre water bottles", "Sunscreen (SPF 50) and lip balm", "Toiletries and quick-dry towel",
+            "Personal medicines", "Original government ID + 2 photocopies", "Medical certificate (if required)"]},
+    ],
+}
+
 
 TREKS = [
     # ---------------------------------------------------------------- Sahyadri
@@ -717,6 +822,23 @@ def _prepare_itineraries():
 
 
 _prepare_itineraries()
+
+
+def _prepare_sections():
+    """Fill the trek page sections (eligibility, how to reach, ...) with shared defaults."""
+    for trek in TREKS:
+        kind = "mountain" if trek["category"] in ("himalayan", "adventure") else "local"
+        trek.setdefault("about", [])
+        trek.setdefault("eligibility", ELIGIBILITY[trek["difficulty"]] + ELIGIBILITY_COMMON)
+        trek.setdefault("how_to_reach", [{**r, "text": r["text"].format(start=trek["start_point"])}
+                                         for r in HOW_TO_REACH[kind]])
+        trek.setdefault("essentials", ESSENTIALS[kind])
+        trek.setdefault("youtube_id", "")
+        trek.setdefault("links", [])
+        trek.setdefault("faqs", [])
+
+
+_prepare_sections()
 
 
 def upcoming_dates(trek, count=4, today=None):
